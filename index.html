@@ -61,9 +61,6 @@
       background-position: 0 0, 18px 18px;
     }
 
-    .gold-glow {
-      box-shadow: 0 0 15px rgba(218, 165, 32, 0.25);
-    }
     .gold-glow-lg {
       box-shadow: 0 0 25px rgba(218, 165, 32, 0.45);
     }
@@ -366,46 +363,79 @@
 
       </div>
 
-      <!-- Result Modal & Image Download Card -->
+      <!-- Result Modal: Streamlined Report Format -->
       <div id="resultModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border-2 border-amber-500/80 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative gold-glow-lg text-center space-y-5">
-          <!-- Download Target Area for html2canvas -->
-          <div id="captureResultCard" class="p-6 bg-gradient-to-b from-slate-950 via-[#0e121e] to-slate-950 border border-amber-600/40 rounded-xl space-y-4">
-            <div class="font-medieval text-xs tracking-widest text-amber-400/80 uppercase">Official Duel Verdict</div>
-            <h3 class="font-cinzel text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400">
-              미슬토 위저드 결투 증명서
-            </h3>
-            <div class="w-24 h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto"></div>
-
-            <div id="resultWinnerBadge" class="py-3 px-4 rounded-xl bg-amber-950/40 border border-amber-600/50">
-              <span class="text-xs uppercase text-amber-300 font-bold block mb-1">VICTORIOUS DUELIST</span>
-              <div id="resultWinnerText" class="text-2xl font-black font-cinzel text-yellow-300">결투 결과 판정</div>
-            </div>
-
-            <p id="resultReasonText" class="text-sm text-slate-300 font-medium"></p>
-
-            <div class="grid grid-cols-2 gap-3 pt-2 text-xs text-left">
-              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div id="resP1Name" class="font-bold text-amber-300 mb-1">캐릭터 1</div>
-                <div class="text-slate-400">잔여 체력: <span id="resP1HP" class="text-white font-bold">0</span></div>
-                <div class="text-slate-400">누적 피해: <span id="resP1Dmg" class="text-amber-200 font-bold">0</span></div>
-              </div>
-              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div id="resP2Name" class="font-bold text-blue-300 mb-1">캐릭터 2</div>
-                <div class="text-slate-400">잔여 체력: <span id="resP2HP" class="text-white font-bold">0</span></div>
-                <div class="text-slate-400">누적 피해: <span id="resP2Dmg" class="text-blue-200 font-bold">0</span></div>
-              </div>
-            </div>
+        <div class="bg-slate-900 border-2 border-amber-500/80 rounded-2xl max-w-lg w-full p-5 shadow-2xl relative text-center space-y-4">
+          
+          <!-- Download Target Area for html2canvas (Clean Official Report Format) -->
+          <div id="captureResultCard" style="background-color: #111625; border: 1.5px solid #d3a625; color: #e2e8f0; font-family: 'Noto Sans KR', sans-serif;" class="p-6 rounded-xl text-left space-y-4">
             
-            <div class="text-[10px] text-amber-300/40 pt-2 font-mono">
-              Mistletoe Wizard FIght Club • meal_writes
+            <!-- Report Header -->
+            <div style="border-bottom: 2px solid #d3a625;" class="pb-3 flex justify-between items-end">
+              <div>
+                <p style="color: #d3a625; font-size: 11px; font-weight: bold; letter-spacing: 0.1em; margin: 0;">MISTLETOE REPORT</p>
+                <h3 style="font-size: 20px; font-weight: 800; color: #ffffff; margin: 2px 0 0 0;">결투 공식 결과 보고서</h3>
+              </div>
+              <div style="text-align: right;">
+                <p id="repDuelCode" style="color: #94a3b8; font-size: 10px; font-family: monospace; margin: 0;">NO. 0000-0000</p>
+                <p id="repDuelDate" style="color: #94a3b8; font-size: 10px; margin: 0;">2026. 00. 00</p>
+              </div>
             </div>
+
+            <!-- Winner Banner Box -->
+            <div style="background-color: #1a2236; border: 1px solid #3b4563; padding: 12px; border-radius: 8px; text-align: center;">
+              <span style="font-size: 11px; color: #d3a625; font-weight: bold; letter-spacing: 0.05em; display: block;">최종 판정 결과</span>
+              <div id="resultWinnerText" style="font-size: 20px; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                결투 결과
+              </div>
+            </div>
+
+            <!-- Stats Comparison Table -->
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px;">
+              <thead>
+                <tr style="border-bottom: 1px solid #334155; color: #94a3b8;">
+                  <th style="padding: 6px 4px; text-align: left;">구분</th>
+                  <th id="thP1Name" style="padding: 6px 4px; text-align: center; color: #f59e0b;">결투자 1</th>
+                  <th id="thP2Name" style="padding: 6px 4px; text-align: center; color: #60a5fa;">결투자 2</th>
+                </tr>
+              </thead>
+              <tbody style="color: #f1f5f9;">
+                <tr style="border-bottom: 1px solid #1e293b;">
+                  <td style="padding: 6px 4px; color: #94a3b8;">소속 / 학년</td>
+                  <td id="repP1House" style="padding: 6px 4px; text-align: center;">-</td>
+                  <td id="repP2House" style="padding: 6px 4px; text-align: center;">-</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #1e293b;">
+                  <td style="padding: 6px 4px; color: #94a3b8;">잔여 체력</td>
+                  <td id="resP1HP" style="padding: 6px 4px; text-align: center; font-weight: bold;">0</td>
+                  <td id="resP2HP" style="padding: 6px 4px; text-align: center; font-weight: bold;">0</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #1e293b;">
+                  <td style="padding: 6px 4px; color: #94a3b8;">누적 가한 피해</td>
+                  <td id="resP1Dmg" style="padding: 6px 4px; text-align: center; font-weight: bold;">0</td>
+                  <td id="resP2Dmg" style="padding: 6px 4px; text-align: center; font-weight: bold;">0</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Reason Description Box -->
+            <div style="background-color: #0d111a; border-left: 3px solid #d3a625; padding: 8px 12px; border-radius: 4px; font-size: 11px;">
+              <span style="color: #94a3b8; display: block; font-size: 10px; margin-bottom: 2px;">[판정 사유]</span>
+              <span id="resultReasonText" style="color: #cbd5e1; line-height: 1.4;"></span>
+            </div>
+
+            <!-- Report Footer -->
+            <div style="border-top: 1px solid #28334e; padding-top: 6px; display: flex; justify-content: space-between; font-size: 9px; color: #64748b;">
+              <span>MISTLETOE WIZARD Fight CLUB</span>
+              <span>@meal_writes</span>
+            </div>
+
           </div>
 
           <!-- Modal Action Buttons -->
-          <div class="flex flex-wrap justify-center gap-3">
+          <div class="flex flex-wrap justify-center gap-3 pt-2">
             <button id="btnDownloadImage" onclick="downloadResultImage()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm rounded-xl shadow-lg flex items-center gap-2">
-              <span>📷</span> 결투 결과 이미지 저장 (PNG)
+              <span>📷</span> 보고서 이미지 저장 (PNG)
             </button>
             <button onclick="closeResultModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl border border-slate-700">
               닫기
@@ -505,7 +535,6 @@
           <div class="space-y-4 text-xs sm:text-sm">
             <!-- Profile Info Row -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-              <!-- Avatar Preview and upload -->
               <div class="sm:col-span-4 flex flex-col items-center">
                 <div class="w-24 h-24 rounded-2xl overflow-hidden border-2 border-amber-500/50 bg-slate-950 relative shadow-inner group">
                   <img id="c${id}-img-preview" src="${char.photoUrl}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/150x150/111827/d3a625?text=Wizard';">
@@ -1111,7 +1140,7 @@
       document.getElementById('btnNextPhase').disabled = false;
       document.getElementById('btnAutoPlay').disabled = false;
 
-      appendLog(`🔔 <strong>미슬토 위저드 결투 클럽의 결투가 개시되었습니다!)</strong>`, 'system');
+      appendLog(`🔔 <strong>미슬토 위저드 결투 클럽의 결투가 개시되었습니다! (총 7턴 규정)</strong>`, 'system');
       processNextPhase();
     }
 
@@ -1380,20 +1409,20 @@
       if (hp1 <= 0 && hp2 <= 0) {
         if (dmg1 > dmg2) {
           winnerId = 1;
-          verdictReason = '동시 실신! 더 많은 누적 피해를 가한 캐릭터 1 승리 판정.';
+          verdictReason = '동시 실신! 더 많은 누적 피해를 가한 결투자 1 승리 판정.';
         } else if (dmg2 > dmg1) {
           winnerId = 2;
-          verdictReason = '동시 실신! 더 많은 누적 피해를 가한 캐릭터 2 승리 판정.';
+          verdictReason = '동시 실신! 더 많은 누적 피해를 가한 결투자 2 승리 판정.';
         } else {
           winnerId = 0;
           verdictReason = '동시 실신 및 누적 피해 동률로 무승부(Draw) 처리되었습니다.';
         }
       } else if (hp1 <= 0) {
         winnerId = 2;
-        verdictReason = `${characters[1].name}의 체력이 0이 되어 결투 불능 상태가 되었습니다.`;
+        verdictReason = `${characters[1].name} 결투자의 체력이 0이 되어 결투 불능(KO) 상태가 되었습니다.`;
       } else if (hp2 <= 0) {
         winnerId = 1;
-        verdictReason = `${characters[2].name}의 체력이 0이 되어 결투 불능 상태가 되었습니다.`;
+        verdictReason = `${characters[2].name} 결투자의 체력이 0이 되어 결투 불능(KO) 상태가 되었습니다.`;
       } else {
         if (hp1 > hp2) {
           winnerId = 1;
@@ -1404,10 +1433,10 @@
         } else {
           if (dmg1 > dmg2) {
             winnerId = 1;
-            verdictReason = `체력 동률 (${hp1} vs ${hp2})! 누적 총 피해량 우세 (${dmg1} vs ${dmg2})로 승리 판정.`;
+            verdictReason = `체력 동률 (${hp1} vs ${hp2})! 누적 총 피해량 우세 (${dmg1} vs ${dmg2})로 판정승.`;
           } else if (dmg2 > dmg1) {
             winnerId = 2;
-            verdictReason = `체력 동률 (${hp2} vs ${hp1})! 누적 총 피해량 우세 (${dmg2} vs ${dmg1})로 승리 판정.`;
+            verdictReason = `체력 동률 (${hp2} vs ${hp1})! 누적 총 피해량 우세 (${dmg2} vs ${dmg1})로 판정승.`;
           } else {
             winnerId = 0;
             verdictReason = `체력과 가한 누적 피해량이 완벽히 동일하여 무승부(Draw)로 판정되었습니다.`;
@@ -1416,23 +1445,35 @@
       }
 
       if (winnerId === 1) {
-        verdictTitle = `🏆 ${characters[1].name} (${characters[1].house}) 승리!`;
+        verdictTitle = `${characters[1].name} (${characters[1].house}) 승리`;
       } else if (winnerId === 2) {
-        verdictTitle = `🏆 ${characters[2].name} (${characters[2].house}) 승리!`;
+        verdictTitle = `${characters[2].name} (${characters[2].house}) 승리`;
       } else {
-        verdictTitle = `⚖️ 결투 무승부 (DRAW)`;
+        verdictTitle = `결투 무승부 (DRAW)`;
       }
+
+      // Populate Clean Official Report Form
+      const now = new Date();
+      const duelCode = `MWFC-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const dateStr = `${now.getFullYear()}. ${String(now.getMonth()+1).padStart(2,'0')}. ${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+      document.getElementById('repDuelCode').innerText = duelCode;
+      document.getElementById('repDuelDate').innerText = dateStr;
 
       document.getElementById('resultWinnerText').innerText = verdictTitle;
       document.getElementById('resultReasonText').innerText = verdictReason;
 
-      document.getElementById('resP1Name').innerText = `${characters[1].name} (${characters[1].house} · ${characters[1].grade})`;
-      document.getElementById('resP1HP').innerText = hp1;
-      document.getElementById('resP1Dmg').innerText = dmg1;
+      document.getElementById('thP1Name').innerText = characters[1].name;
+      document.getElementById('thP2Name').innerText = characters[2].name;
 
-      document.getElementById('resP2Name').innerText = `${characters[2].name} (${characters[2].house} · ${characters[2].grade})`;
-      document.getElementById('resP2HP').innerText = hp2;
-      document.getElementById('resP2Dmg').innerText = dmg2;
+      document.getElementById('repP1House').innerText = `${characters[1].house} · ${characters[1].grade}`;
+      document.getElementById('repP2House').innerText = `${characters[2].house} · ${characters[2].grade}`;
+
+      document.getElementById('resP1HP').innerText = `${hp1} / ${characters[1].derived.maxHp}`;
+      document.getElementById('resP2HP').innerText = `${hp2} / ${characters[2].derived.maxHp}`;
+
+      document.getElementById('resP1Dmg').innerText = `${dmg1} DMG`;
+      document.getElementById('resP2Dmg').innerText = `${dmg2} DMG`;
 
       document.getElementById('resultModal').classList.remove('hidden');
 
@@ -1454,16 +1495,18 @@
 
       const btn = document.getElementById('btnDownloadImage');
       const originalText = btn.innerHTML;
-      btn.innerHTML = '<span>⏳</span> 이미지 생성 중...';
+      btn.innerHTML = '<span>⏳</span> 보고서 생성 중...';
       btn.disabled = true;
 
+      // Clean, robust render options without unsupported gradient breaks
       html2canvas(captureEl, {
-        backgroundColor: '#090d16',
+        backgroundColor: '#111625',
         scale: 2,
-        useCORS: true
+        useCORS: true,
+        logging: false
       }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `Mistletoe_Duel_Result_${Date.now()}.png`;
+        link.download = `Mistletoe_Duel_Report_${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         btn.innerHTML = originalText;
@@ -1471,7 +1514,7 @@
       }).catch(err => {
         btn.innerHTML = originalText;
         btn.disabled = false;
-        showCustomAlert('이미지 캡처 중 오류가 발생했습니다. 브라우저 설정을 확인해주세요.');
+        showCustomAlert('이미지 캡처 중 오류가 발생했습니다.');
       });
     }
 
