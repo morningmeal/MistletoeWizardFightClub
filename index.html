@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>미슬토 위저드 결투 클럽 | Mistletoe Wizard Fight Club</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: MedievalSharp & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Noto+Sans+KR:wght@300;400;600;700;800&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <!-- html2canvas for Duel Result Snapshot -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gryffindor: { primary: '#740001', secondary: '#D3A625', dark: '#4c0203' },
+            hufflepuff: { primary: '#e5ad20', secondary: '#372e29', dark: '#5c450c' },
+            slytherin: { primary: '#1a472a', secondary: '#aaaaaa', dark: '#0c2315' },
+            ravenclaw: { primary: '#0e1a40', secondary: '#946b2d', dark: '#060b1c' },
+            magicgold: '#e6c35c'
+          },
+          fontFamily: {
+            cinzel: ['Cinzel', 'serif'],
+            medieval: ['MedievalSharp', 'cursive'],
+            sans: ['"Noto Sans KR"', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #111625;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3b4259;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #c5a059;
+    }
+
+    .parchment-texture {
+      background-color: #0d111b;
+      background-image: radial-gradient(#1e2638 1px, transparent 1px), radial-gradient(#1e2638 1px, #090c14 1px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+    }
+
+    .gold-glow {
+      box-shadow: 0 0 15px rgba(218, 165, 32, 0.25);
+    }
+    .gold-glow-lg {
+      box-shadow: 0 0 25px rgba(218, 165, 32, 0.45);
+    }
+  </style>
+</head>
+
+<body class="parchment-texture text-slate-200 min-h-screen font-sans flex flex-col selection:bg-magicgold selection:text-black">
+  
+  <header class="border-b border-amber-900/40 bg-black/70 backdrop-blur sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-300 flex items-center justify-center text-slate-950 font-medieval text-2xl shadow-lg border border-yellow-200">
+          ⚡
+        </div>
+        <div>
+          <h1 class="font-cinzel text-xl sm:text-2xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-100">
+            MISTLETOE WIZARD FIght CLUB
+          </h1>
+          <p class="text-xs text-amber-200/60 font-sans tracking-tight">미슬토 위저드 결투 클럽 • 1:1 결투 시뮬레이터</p>
+        </div>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex items-center bg-slate-900/90 p-1.5 rounded-xl border border-amber-800/40 shadow-inner">
+        <button id="tabSetupBtn" onclick="switchView('setup')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-amber-700 to-amber-600 text-white shadow-md">
+          📜 캐릭터 설정
+        </button>
+        <button id="tabArenaBtn" onclick="switchView('arena')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-amber-200">
+          ⚔️ 결투 아레나
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6">
+
+    <section id="viewSetup" class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/70 p-4 rounded-xl border border-amber-900/30 gap-3">
+        <div>
+          <h2 class="font-cinzel text-xl font-bold text-amber-300 flex items-center gap-2">
+            <span>✨</span> 결투자 프로필 & 스탯 설정
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            학년별 투자 포인트를 배분하세요. 기숙사 및 지팡이 보정이 자동 합산됩니다.
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="loadSamplePreset(1)" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-amber-300 transition">
+            샘플 1 불러오기
+          </button>
+          <button onclick="loadSamplePreset(2)" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-amber-300 transition">
+            샘플 2 불러오기
+          </button>
+        </div>
+      </div>
+
+      <!-- Two Character Setup Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Character 1 Setup Form -->
+        <div id="c1-setup-container" class="bg-slate-900/80 rounded-2xl p-5 border border-amber-800/40 shadow-xl relative backdrop-blur-sm">
+          <div class="flex items-center justify-between pb-3 border-b border-amber-900/40 mb-4">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400 font-cinzel">PLAYER 1</span>
+            <span id="c1-status-pill" class="text-xs px-2.5 py-0.5 rounded-full bg-red-900/50 text-red-300 border border-red-700/50">설정 미완료</span>
+          </div>
+          <div id="c1-form-inner"></div>
+        </div>
+
+        <!-- Character 2 Setup Form -->
+        <div id="c2-setup-container" class="bg-slate-900/80 rounded-2xl p-5 border border-blue-900/40 shadow-xl relative backdrop-blur-sm">
+          <div class="flex items-center justify-between pb-3 border-b border-blue-900/40 mb-4">
+            <span class="text-xs font-bold uppercase tracking-widest text-blue-400 font-cinzel">PLAYER 2</span>
+            <span id="c2-status-pill" class="text-xs px-2.5 py-0.5 rounded-full bg-red-900/50 text-red-300 border border-red-700/50">설정 미완료</span>
+          </div>
+          <div id="c2-form-inner"></div>
+        </div>
+      </div>
+
+      <!-- Quick Action Navigation to Arena -->
+      <div class="text-center pt-2">
+        <button onclick="proceedToArena()" class="px-8 py-3.5 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 hover:from-amber-500 hover:to-yellow-400 text-slate-950 font-bold rounded-xl shadow-lg hover:shadow-yellow-500/20 transform hover:-translate-y-0.5 active:translate-y-0 text-base tracking-wide transition-all inline-flex items-center gap-2">
+          <span>대결 아레나로 입장하기</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+      <!-- LocalStorage Saved Character Library -->
+      <div class="mt-6 bg-slate-950/70 border border-amber-900/30 rounded-xl p-5">
+        <h3 class="font-cinzel text-lg font-bold text-amber-200 mb-3 flex items-center gap-2">
+          <span>📚</span> 저장된 결투자 목록
+        </h3>
+        <div id="savedPresetList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <section id="viewArena" class="hidden space-y-5">
+      <!-- Duel Arena Main Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        <!-- Left: Character 1 Arena Card -->
+        <div id="arenaCard1" class="lg:col-span-3 bg-slate-900/90 rounded-2xl p-4 border border-amber-800/40 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all">
+          <div class="relative z-10 space-y-3">
+            <div class="flex items-center space-x-3">
+              <img id="a1-avatar" class="w-16 h-16 rounded-xl object-cover border-2 border-amber-400/50 shadow-md bg-slate-800" src="" alt="Char 1">
+              <div>
+                <span id="a1-house-badge" class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded font-bold">HOUSE</span>
+                <h3 id="a1-name" class="font-bold text-lg text-amber-200 truncate">캐릭터 1</h3>
+                <p id="a1-grade" class="text-xs text-slate-400 font-medium">학년 미정</p>
+              </div>
+            </div>
+
+            <!-- Health Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-emerald-400">HP (체력)</span>
+                <span id="a1-hp-text" class="text-slate-200">100 / 100</span>
+              </div>
+              <div class="w-full bg-slate-800 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                <div id="a1-hp-bar" class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full transition-all duration-300" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <!-- Detailed In-Duel Stats Grid -->
+            <div class="grid grid-cols-2 gap-2 text-xs bg-black/40 p-2.5 rounded-xl border border-slate-800">
+              <div>
+                <span class="text-slate-400">공격력:</span>
+                <span id="a1-atk" class="font-bold text-amber-300 ml-1">10</span>
+              </div>
+              <div>
+                <span class="text-slate-400">방어력:</span>
+                <span id="a1-def" class="font-bold text-sky-300 ml-1">10</span>
+              </div>
+              <div>
+                <span class="text-slate-400">민첩성:</span>
+                <span id="a1-spd" class="font-bold text-purple-300 ml-1">1</span>
+              </div>
+              <div>
+                <span class="text-slate-400">치명타:</span>
+                <span id="a1-crit" class="font-bold text-rose-300 ml-1">10%</span>
+              </div>
+            </div>
+
+            <!-- Reaction Ratio Display -->
+            <div class="bg-black/30 p-2 rounded-lg text-xs space-y-1 border border-slate-800">
+              <div class="flex justify-between text-[11px] text-slate-300">
+                <span>대응 성향:</span>
+                <span id="a1-react-ratio" class="font-semibold text-amber-300">방어 50% | 반격 50%</span>
+              </div>
+              <div class="w-full h-1.5 bg-sky-950 rounded-full overflow-hidden flex">
+                <div id="a1-def-ratio-bar" class="h-full bg-sky-500" style="width: 50%;"></div>
+                <div id="a1-atk-ratio-bar" class="h-full bg-rose-500" style="width: 50%;"></div>
+              </div>
+            </div>
+
+            <!-- Cumulative Damage Dealt -->
+            <div class="bg-amber-950/20 border border-amber-800/30 p-2 rounded-lg text-center">
+              <span class="text-[11px] text-amber-300/80">누적 가한 피해량</span>
+              <p id="a1-total-dmg" class="font-cinzel font-bold text-lg text-amber-300">0</p>
+            </div>
+          </div>
+
+          <!-- Current Turn Stance Indicator -->
+          <div id="a1-stance-box" class="mt-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center text-xs font-semibold text-slate-400">
+            대기 중
+          </div>
+        </div>
+
+        <!-- Center: Battle Stage & Log Window -->
+        <div class="lg:col-span-6 flex flex-col bg-slate-950/90 rounded-2xl border border-amber-800/40 shadow-2xl overflow-hidden min-h-[520px]">
+          <!-- Arena Header & Round Counter -->
+          <div class="bg-gradient-to-b from-slate-900 to-black px-4 py-3 border-b border-amber-900/40 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+              <span id="arenaRoundIndicator" class="font-cinzel text-sm sm:text-base font-bold text-amber-300">
+                ROUND 0 / 7
+              </span>
+            </div>
+            <div id="initiativeIndicator" class="text-xs text-slate-400 font-medium">
+              결투 개시 대기 중
+            </div>
+          </div>
+
+          <!-- Magical Visual Stage -->
+          <div id="visualStage" class="relative h-28 bg-gradient-to-b from-indigo-950/20 via-slate-950 to-slate-950 border-b border-slate-900 flex items-center justify-around px-4 overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none"></div>
+            
+            <div id="stageAvatar1" class="text-center transition-all duration-300 transform">
+              <div class="w-14 h-14 rounded-full border-2 border-amber-400/80 overflow-hidden mx-auto shadow-lg shadow-amber-500/10 bg-slate-800">
+                <img id="s1-img" src="" class="w-full h-full object-cover" alt="p1">
+              </div>
+              <span id="s1-label" class="text-[11px] font-bold text-slate-300 mt-1 block truncate max-w-[100px]">Player 1</span>
+            </div>
+
+            <!-- Center VS -->
+            <div id="stageClash" class="flex flex-col items-center justify-center">
+              <div class="text-3xl font-medieval text-amber-400 filter drop-shadow-md">VS</div>
+              <span id="clashDetail" class="text-[10px] text-amber-300/70 font-mono tracking-tighter">DUEL LOG</span>
+            </div>
+
+            <div id="stageAvatar2" class="text-center transition-all duration-300 transform">
+              <div class="w-14 h-14 rounded-full border-2 border-blue-400/80 overflow-hidden mx-auto shadow-lg shadow-blue-500/10 bg-slate-800">
+                <img id="s2-img" src="" class="w-full h-full object-cover" alt="p2">
+              </div>
+              <span id="s2-label" class="text-[11px] font-bold text-slate-300 mt-1 block truncate max-w-[100px]">Player 2</span>
+            </div>
+          </div>
+
+          <!-- Log Feed Window -->
+          <div id="duelLogWindow" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 font-sans text-xs sm:text-sm bg-slate-950/80">
+            <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/30 text-amber-200/90 leading-relaxed text-center font-cinzel">
+              ✦ 양쪽 마법사의 지팡이가 겨눠졌습니다. 준비가 완료되면 [결투 시작]을 누르세요. ✦
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="bg-black/80 border-t border-slate-800 p-3 sm:p-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <button id="btnStartDuel" onclick="startDuel()" class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold rounded-lg shadow-lg text-xs sm:text-sm transition-all">
+              ⚔️ 결투 시작
+            </button>
+            <button id="btnNextPhase" onclick="processNextPhase()" disabled class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-200 font-bold rounded-lg border border-amber-700/40 text-xs sm:text-sm transition-all disabled:opacity-40 disabled:pointer-events-none">
+              다음 행동 ➔
+            </button>
+            <button id="btnAutoPlay" onclick="toggleAutoPlay()" disabled class="px-4 py-2.5 bg-indigo-900/60 hover:bg-indigo-800/80 text-indigo-200 font-medium rounded-lg border border-indigo-700/50 text-xs sm:text-sm transition-all disabled:opacity-40 disabled:pointer-events-none">
+              ⚡ 자동 진행
+            </button>
+            <button id="btnResetDuel" onclick="resetDuel(true)" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium rounded-lg border border-slate-700 text-xs sm:text-sm transition-all">
+              🔄 리셋
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Character 2 Arena Card -->
+        <div id="arenaCard2" class="lg:col-span-3 bg-slate-900/90 rounded-2xl p-4 border border-blue-900/40 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all">
+          <div class="relative z-10 space-y-3">
+            <div class="flex items-center space-x-3">
+              <img id="a2-avatar" class="w-16 h-16 rounded-xl object-cover border-2 border-blue-400/50 shadow-md bg-slate-800" src="" alt="Char 2">
+              <div>
+                <span id="a2-house-badge" class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded font-bold">HOUSE</span>
+                <h3 id="a2-name" class="font-bold text-lg text-blue-200 truncate">캐릭터 2</h3>
+                <p id="a2-grade" class="text-xs text-slate-400 font-medium">학년 미정</p>
+              </div>
+            </div>
+
+            <!-- Health Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-emerald-400">HP (체력)</span>
+                <span id="a2-hp-text" class="text-slate-200">100 / 100</span>
+              </div>
+              <div class="w-full bg-slate-800 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                <div id="a2-hp-bar" class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full transition-all duration-300" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <!-- Detailed In-Duel Stats Grid -->
+            <div class="grid grid-cols-2 gap-2 text-xs bg-black/40 p-2.5 rounded-xl border border-slate-800">
+              <div>
+                <span class="text-slate-400">공격력:</span>
+                <span id="a2-atk" class="font-bold text-amber-300 ml-1">10</span>
+              </div>
+              <div>
+                <span class="text-slate-400">방어력:</span>
+                <span id="a2-def" class="font-bold text-sky-300 ml-1">10</span>
+              </div>
+              <div>
+                <span class="text-slate-400">민첩성:</span>
+                <span id="a2-spd" class="font-bold text-purple-300 ml-1">1</span>
+              </div>
+              <div>
+                <span class="text-slate-400">치명타:</span>
+                <span id="a2-crit" class="font-bold text-rose-300 ml-1">10%</span>
+              </div>
+            </div>
+
+            <!-- Reaction Ratio Display -->
+            <div class="bg-black/30 p-2 rounded-lg text-xs space-y-1 border border-slate-800">
+              <div class="flex justify-between text-[11px] text-slate-300">
+                <span>대응 성향:</span>
+                <span id="a2-react-ratio" class="font-semibold text-blue-300">방어 50% | 반격 50%</span>
+              </div>
+              <div class="w-full h-1.5 bg-sky-950 rounded-full overflow-hidden flex">
+                <div id="a2-def-ratio-bar" class="h-full bg-sky-500" style="width: 50%;"></div>
+                <div id="a2-atk-ratio-bar" class="h-full bg-rose-500" style="width: 50%;"></div>
+              </div>
+            </div>
+
+            <!-- Cumulative Damage Dealt -->
+            <div class="bg-blue-950/20 border border-blue-800/30 p-2 rounded-lg text-center">
+              <span class="text-[11px] text-blue-300/80">누적 가한 피해량</span>
+              <p id="a2-total-dmg" class="font-cinzel font-bold text-lg text-blue-300">0</p>
+            </div>
+          </div>
+
+          <!-- Current Turn Stance Indicator -->
+          <div id="a2-stance-box" class="mt-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center text-xs font-semibold text-slate-400">
+            대기 중
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Result Modal & Image Download Card -->
+      <div id="resultModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-amber-500/80 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative gold-glow-lg text-center space-y-5">
+          <!-- Download Target Area for html2canvas -->
+          <div id="captureResultCard" class="p-6 bg-gradient-to-b from-slate-950 via-[#0e121e] to-slate-950 border border-amber-600/40 rounded-xl space-y-4">
+            <div class="font-medieval text-xs tracking-widest text-amber-400/80 uppercase">Official Duel Verdict</div>
+            <h3 class="font-cinzel text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400">
+              미슬토 위저드 결투 증명서
+            </h3>
+            <div class="w-24 h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto"></div>
+
+            <div id="resultWinnerBadge" class="py-3 px-4 rounded-xl bg-amber-950/40 border border-amber-600/50">
+              <span class="text-xs uppercase text-amber-300 font-bold block mb-1">VICTORIOUS DUELIST</span>
+              <div id="resultWinnerText" class="text-2xl font-black font-cinzel text-yellow-300">결투 결과 판정</div>
+            </div>
+
+            <p id="resultReasonText" class="text-sm text-slate-300 font-medium"></p>
+
+            <div class="grid grid-cols-2 gap-3 pt-2 text-xs text-left">
+              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                <div id="resP1Name" class="font-bold text-amber-300 mb-1">캐릭터 1</div>
+                <div class="text-slate-400">잔여 체력: <span id="resP1HP" class="text-white font-bold">0</span></div>
+                <div class="text-slate-400">누적 피해: <span id="resP1Dmg" class="text-amber-200 font-bold">0</span></div>
+              </div>
+              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                <div id="resP2Name" class="font-bold text-blue-300 mb-1">캐릭터 2</div>
+                <div class="text-slate-400">잔여 체력: <span id="resP2HP" class="text-white font-bold">0</span></div>
+                <div class="text-slate-400">누적 피해: <span id="resP2Dmg" class="text-blue-200 font-bold">0</span></div>
+              </div>
+            </div>
+            
+            <div class="text-[10px] text-amber-300/40 pt-2 font-mono">
+              Mistletoe Wizard FIght Club • Hogwarts FIght Code
+            </div>
+          </div>
+
+          <!-- Modal Action Buttons -->
+          <div class="flex flex-wrap justify-center gap-3">
+            <button id="btnDownloadImage" onclick="downloadResultImage()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm rounded-xl shadow-lg flex items-center gap-2">
+              <span>📷</span> 결투 결과 이미지 저장 (PNG)
+            </button>
+            <button onclick="closeResultModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl border border-slate-700">
+              닫기
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- In-App Alert Modal -->
+    <div id="customAlertModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+      <div class="bg-slate-900 border border-amber-600/60 rounded-xl p-5 max-w-sm w-full text-center space-y-4 shadow-2xl">
+        <div class="text-2xl">⚡</div>
+        <p id="customAlertMessage" class="text-sm text-slate-200 leading-relaxed"></p>
+        <button onclick="closeCustomAlert()" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs rounded-lg transition">
+          확인
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /* In-App Alert Replacement (No window.alert) */
+    function showCustomAlert(msg) {
+      document.getElementById('customAlertMessage').innerText = msg;
+      document.getElementById('customAlertModal').classList.remove('hidden');
+    }
+    function closeCustomAlert() {
+      document.getElementById('customAlertModal').classList.add('hidden');
+    }
+
+    // Exact grades mapping: 1학년 ~ 7학년
+    function getPointsByGrade(gradeStr) {
+      if (gradeStr === '1학년' || gradeStr === '2학년') return 9;
+      if (gradeStr === '3학년' || gradeStr === '4학년' || gradeStr === '5학년') return 11;
+      if (gradeStr === '6학년' || gradeStr === '7학년') return 13;
+      return 11; // default fallback
+    }
+
+    const GAME_CONFIG = {
+      houseBonuses: {
+        '그리핀도르': { will: 1, passion: 0, caution: 0, speed: 0 },
+        '후플푸프':   { will: 0, passion: 1, caution: 0, speed: 0 },
+        '슬리데린':   { will: 0, passion: 0, caution: 1, speed: 0 },
+        '래번클로':   { will: 0, passion: 0, caution: 0, speed: 1 }
+      },
+      woodBonuses: {
+        '편백나무': { will: 1, passion: 0, caution: 0, speed: 0 },
+        '사시나무': { will: 0, passion: 1, caution: 0, speed: 0 },
+        '주목':     { will: 0, passion: 0, caution: 1, speed: 0 },
+        '적참나무': { will: 0, passion: 0, caution: 0, speed: 1 },
+        '기타':     { will: 0, passion: 0, caution: 0, speed: 0 }
+      },
+      coreBonuses: {
+        '유니콘의 털': { caution: 1, passion: 0 },
+        '용의 심근':   { passion: 1, caution: 0 },
+        '기타':       { caution: 0, passion: 0 }
+      },
+      houseColors: {
+        '그리핀도르': { bg: 'bg-red-900/80', text: 'text-yellow-400', border: 'border-red-700' },
+        '후플푸프':   { bg: 'bg-yellow-700/80', text: 'text-amber-100', border: 'border-yellow-600' },
+        '슬리데린':   { bg: 'bg-emerald-950/80', text: 'text-emerald-300', border: 'border-emerald-800' },
+        '래번클로':   { bg: 'bg-blue-950/80', text: 'text-sky-300', border: 'border-blue-800' }
+      }
+    };
+
+    // Characters State
+    const characters = {
+      1: createInitialCharState(1, '요하나 모르겐', '3학년', '그리핀도르', '사시나무', '용의 심근', 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80'),
+      2: createInitialCharState(2, '세레나 마르티네즈', '3학년', '래번클로', '주목', '유니콘의 털', 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80')
+    };
+
+    function createInitialCharState(id, name, grade, house, wood, core, imgUrl) {
+      return {
+        id,
+        name,
+        grade, // '1학년' ~ '7학년'
+        house,
+        wandWood: wood,
+        wandCore: core,
+        photoUrl: imgUrl,
+        invested: { will: 3, passion: 3, caution: 3, speed: 2 },
+        luck: 2,
+        isLocked: false,
+        finalStats: { will: 3, passion: 3, caution: 3, speed: 2, luck: 2 },
+        derived: { hp: 130, maxHp: 130, atk: 16, def: 16, spd: 3, crit: 14 }
+      };
+    }
+
+    function renderSetupForms() {
+      [1, 2].forEach(id => {
+        const char = characters[id];
+        const container = document.getElementById(`c${id}-form-inner`);
+        
+        container.innerHTML = `
+          <div class="space-y-4 text-xs sm:text-sm">
+            <!-- Profile Info Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+              <!-- Avatar Preview and upload -->
+              <div class="sm:col-span-4 flex flex-col items-center">
+                <div class="w-24 h-24 rounded-2xl overflow-hidden border-2 border-amber-500/50 bg-slate-950 relative shadow-inner group">
+                  <img id="c${id}-img-preview" src="${char.photoUrl}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/150x150/111827/d3a625?text=Wizard';">
+                </div>
+                <label class="mt-2 text-[11px] text-amber-300 hover:text-amber-200 cursor-pointer underline">
+                  사진 변경
+                  <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event, ${id})">
+                </label>
+              </div>
+
+              <!-- Basic Fields -->
+              <div class="sm:col-span-8 space-y-2.5">
+                <div>
+                  <label class="block text-slate-400 text-xs mb-1">이름</label>
+                  <input type="text" id="c${id}-name" value="${char.name}" oninput="updateCharBasic(${id})" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:border-amber-500 focus:outline-none text-xs">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-slate-400 text-xs mb-1">학년</label>
+                    <select id="c${id}-grade" onchange="onGradeChange(${id})" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 focus:border-amber-500 focus:outline-none text-xs">
+                      <option value="1학년" ${char.grade === '1학년' ? 'selected' : ''}>1학년 (9P)</option>
+                      <option value="2학년" ${char.grade === '2학년' ? 'selected' : ''}>2학년 (9P)</option>
+                      <option value="3학년" ${char.grade === '3학년' ? 'selected' : ''}>3학년 (11P)</option>
+                      <option value="4학년" ${char.grade === '4학년' ? 'selected' : ''}>4학년 (11P)</option>
+                      <option value="5학년" ${char.grade === '5학년' ? 'selected' : ''}>5학년 (11P)</option>
+                      <option value="6학년" ${char.grade === '6학년' ? 'selected' : ''}>6학년 (13P)</option>
+                      <option value="7학년" ${char.grade === '7학년' ? 'selected' : ''}>7학년 (13P)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-400 text-xs mb-1">기숙사</label>
+                    <select id="c${id}-house" onchange="updateCharBasic(${id})" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 focus:border-amber-500 focus:outline-none text-xs">
+                      <option value="그리핀도르" ${char.house === '그리핀도르' ? 'selected' : ''}>그리핀도르 (의지+1)</option>
+                      <option value="후플푸프" ${char.house === '후플푸프' ? 'selected' : ''}>후플푸프 (열정+1)</option>
+                      <option value="슬리데린" ${char.house === '슬리데린' ? 'selected' : ''}>슬리데린 (신중+1)</option>
+                      <option value="래번클로" ${char.house === '래번클로' ? 'selected' : ''}>래번클로 (속도+1)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-slate-400 text-xs mb-1">지팡이 목재</label>
+                    <select id="c${id}-wood" onchange="updateCharBasic(${id})" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 focus:border-amber-500 focus:outline-none text-xs">
+                      <option value="편백나무" ${char.wandWood === '편백나무' ? 'selected' : ''}>편백나무 (의지+1)</option>
+                      <option value="사시나무" ${char.wandWood === '사시나무' ? 'selected' : ''}>사시나무 (열정+1)</option>
+                      <option value="주목" ${char.wandWood === '주목' ? 'selected' : ''}>주목 (신중+1)</option>
+                      <option value="적참나무" ${char.wandWood === '적참나무' ? 'selected' : ''}>적참나무 (속도+1)</option>
+                      <option value="기타" ${char.wandWood === '기타' ? 'selected' : ''}>기타 (보정 없음)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-400 text-xs mb-1">지팡이 심</label>
+                    <select id="c${id}-core" onchange="updateCharBasic(${id})" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 focus:border-amber-500 focus:outline-none text-xs">
+                      <option value="유니콘의 털" ${char.wandCore === '유니콘의 털' ? 'selected' : ''}>유니콘의 털 (신중+1)</option>
+                      <option value="용의 심근" ${char.wandCore === '용의 심근' ? 'selected' : ''}>용의 심근 (열정+1)</option>
+                      <option value="기타" ${char.wandCore === '기타' ? 'selected' : ''}>기타 (보정 없음)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Point Budget Bar -->
+            <div class="bg-black/50 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+              <span class="text-slate-300">스탯 투자 잔여 포인트:</span>
+              <span id="c${id}-budget-display" class="font-bold font-mono px-2 py-0.5 rounded bg-slate-800 text-amber-300">
+                0 / 11
+              </span>
+            </div>
+
+            <!-- Stats Allocation Controls -->
+            <div class="space-y-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+              ${renderStatControl(id, 'will', '의지', '체력', 'bg-emerald-950 text-emerald-300')}
+              ${renderStatControl(id, 'passion', '열정', '공격력', 'bg-rose-950 text-rose-300')}
+              ${renderStatControl(id, 'caution', '신중', '방어력', 'bg-sky-950 text-sky-300')}
+              ${renderStatControl(id, 'speed', '속도', '민첩성', 'bg-purple-950 text-purple-300')}
+
+              <!-- Non-Allocatable Luck Stat -->
+              <div class="flex items-center justify-between text-xs py-1 px-2 rounded bg-slate-900/80 border border-amber-900/30">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-amber-400">운 (행운)</span>
+                  <span class="text-[10px] text-slate-400">[크리티컬 확률]</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-slate-400 text-[11px]">(완료 시 1~3 랜덤)</span>
+                  <span id="c${id}-luck-badge" class="font-bold font-mono text-amber-300 px-2 py-0.5 bg-black/70 rounded border border-amber-800/40">
+                    ${char.isLocked ? char.luck : '?'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculated Live Combat Stats Display -->
+            <div class="bg-gradient-to-br from-black/80 to-slate-950 p-3 rounded-xl border border-amber-800/40 text-xs space-y-1.5">
+              <div class="font-bold text-amber-300/90 text-[11px] uppercase tracking-wider mb-1">최종 전투 능력치 (보정치 합산)</div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono">
+                <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">초기 체력</span>
+                  <span id="c${id}-val-hp" class="font-bold text-emerald-400 text-sm">130</span>
+                </div>
+                <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">공격력</span>
+                  <span id="c${id}-val-atk" class="font-bold text-rose-400 text-sm">16</span>
+                </div>
+                <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">방어력</span>
+                  <span id="c${id}-val-def" class="font-bold text-sky-400 text-sm">16</span>
+                </div>
+                <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">민첩성</span>
+                  <span id="c${id}-val-spd" class="font-bold text-purple-400 text-sm">3</span>
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-400 text-right pt-1">
+                치명타 확률: <span id="c${id}-val-crit" class="font-bold text-rose-300">14%</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: Lock & Save to Preset -->
+            <div class="grid grid-cols-2 gap-2 pt-2">
+              <button onclick="toggleLockCharacter(${id})" id="c${id}-lock-btn" class="py-2 px-3 rounded-lg font-bold text-xs bg-amber-600 hover:bg-amber-500 text-slate-950 transition shadow">
+                ${char.isLocked ? '🔓 설정 수정하기' : '🔒 설정 완료 (행운 굴리기)'}
+              </button>
+              <button onclick="saveCharacterPreset(${id})" class="py-2 px-3 rounded-lg font-medium text-xs bg-slate-800 hover:bg-slate-700 text-amber-200 border border-slate-700 transition">
+                💾 캐시에 저장
+              </button>
+            </div>
+          </div>
+        `;
+        recalcCharacter(id);
+      });
+    }
+
+    function renderStatControl(charId, statKey, statLabel, roleLabel, badgeClass) {
+      return `
+        <div class="flex items-center justify-between text-xs py-1">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-slate-200">${statLabel}</span>
+            <span class="text-[10px] text-slate-400">[${roleLabel}]</span>
+            <span id="c${charId}-bonus-${statKey}" class="text-[10px] text-amber-400/80 font-mono"></span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="adjustStat(${charId}, '${statKey}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 font-bold flex items-center justify-center border border-slate-700">-</button>
+            <span id="c${charId}-stat-${statKey}" class="w-6 text-center font-bold font-mono text-amber-300">0</span>
+            <button onclick="adjustStat(${charId}, '${statKey}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 font-bold flex items-center justify-center border border-slate-700">+</button>
+            <span id="c${charId}-final-${statKey}" class="ml-1 text-[11px] font-bold px-1.5 py-0.5 rounded ${badgeClass}">0</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleImageUpload(e, charId) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        characters[charId].photoUrl = evt.target.result;
+        const imgEl = document.getElementById(`c${charId}-img-preview`);
+        if (imgEl) imgEl.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateCharBasic(charId) {
+      const c = characters[charId];
+      c.name = document.getElementById(`c${charId}-name`).value || `캐릭터 ${charId}`;
+      c.grade = document.getElementById(`c${charId}-grade`).value;
+      c.house = document.getElementById(`c${charId}-house`).value;
+      c.wandWood = document.getElementById(`c${charId}-wood`).value;
+      c.wandCore = document.getElementById(`c${charId}-core`).value;
+      recalcCharacter(charId);
+    }
+
+    function onGradeChange(charId) {
+      updateCharBasic(charId);
+      const maxPts = getPointsByGrade(characters[charId].grade);
+      let investedSum = getInvestedSum(charId);
+      if (investedSum > maxPts) {
+        const keys = ['speed', 'caution', 'passion', 'will'];
+        while (investedSum > maxPts) {
+          for (let k of keys) {
+            if (characters[charId].invested[k] > 0 && investedSum > maxPts) {
+              characters[charId].invested[k]--;
+              investedSum--;
+            }
+          }
+        }
+      }
+      recalcCharacter(charId);
+    }
+
+    function getInvestedSum(charId) {
+      const inv = characters[charId].invested;
+      return inv.will + inv.passion + inv.caution + inv.speed;
+    }
+
+    function adjustStat(charId, statKey, delta) {
+      const c = characters[charId];
+      if (c.isLocked) {
+        showCustomAlert('설정이 완료(잠금)된 상태입니다. 스탯을 조정하려면 먼저 [설정 수정하기]를 누르세요.');
+        return;
+      }
+      const maxPts = getPointsByGrade(c.grade);
+      const currentVal = c.invested[statKey];
+      const nextVal = currentVal + delta;
+      
+      // Constraint: 0 ~ 5 per stat
+      if (nextVal < 0 || nextVal > 5) return;
+      
+      const currentSum = getInvestedSum(charId);
+      if (delta > 0 && currentSum >= maxPts) {
+        showCustomAlert(`${c.grade} 기준 투자 가능 총 포인트(${maxPts}P)를 모두 사용했습니다.`);
+        return;
+      }
+
+      c.invested[statKey] = nextVal;
+      recalcCharacter(charId);
+    }
+
+    function recalcCharacter(charId) {
+      const c = characters[charId];
+      const maxPts = getPointsByGrade(c.grade);
+      const usedPts = getInvestedSum(charId);
+
+      // House Bonus
+      const hBonus = GAME_CONFIG.houseBonuses[c.house] || { will: 0, passion: 0, caution: 0, speed: 0 };
+      // Wand Wood Bonus
+      const wBonus = GAME_CONFIG.woodBonuses[c.wandWood] || { will: 0, passion: 0, caution: 0, speed: 0 };
+      // Wand Core Bonus
+      const cBonus = GAME_CONFIG.coreBonuses[c.wandCore] || { caution: 0, passion: 0 };
+
+      const totalBonus = {
+        will: (hBonus.will || 0) + (wBonus.will || 0),
+        passion: (hBonus.passion || 0) + (wBonus.passion || 0) + (cBonus.passion || 0),
+        caution: (hBonus.caution || 0) + (wBonus.caution || 0) + (cBonus.caution || 0),
+        speed: (hBonus.speed || 0) + (wBonus.speed || 0)
+      };
+
+      c.finalStats = {
+        will: c.invested.will + totalBonus.will,
+        passion: c.invested.passion + totalBonus.passion,
+        caution: c.invested.caution + totalBonus.caution,
+        speed: c.invested.speed + totalBonus.speed,
+        luck: c.luck
+      };
+
+      // Rules:
+      // Initial HP = 100 + (의지 * 10)
+      // Base ATK = 10 + (열정 * 2)
+      // Base DEF = 10 + (신중 * 2)
+      // Agility = 1 + (속도 * 1)
+      // Crit Chance = 10% + (운 * 2)%
+      c.derived = {
+        hp: 100 + (c.finalStats.will * 10),
+        maxHp: 100 + (c.finalStats.will * 10),
+        atk: 10 + (c.finalStats.passion * 2),
+        def: 10 + (c.finalStats.caution * 2),
+        spd: 1 + (c.finalStats.speed * 1),
+        crit: 10 + (c.finalStats.luck * 2)
+      };
+
+      // Update UI elements
+      const budgetEl = document.getElementById(`c${charId}-budget-display`);
+      if (budgetEl) {
+        budgetEl.innerText = `${usedPts} / ${maxPts}P`;
+        budgetEl.className = usedPts === maxPts 
+          ? 'font-bold font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800' 
+          : 'font-bold font-mono px-2 py-0.5 rounded bg-slate-800 text-amber-300';
+      }
+
+      ['will', 'passion', 'caution', 'speed'].forEach(k => {
+        const invEl = document.getElementById(`c${charId}-stat-${k}`);
+        const finEl = document.getElementById(`c${charId}-final-${k}`);
+        const bonEl = document.getElementById(`c${charId}-bonus-${k}`);
+        if (invEl) invEl.innerText = c.invested[k];
+        if (finEl) finEl.innerText = `총 ${c.finalStats[k]}`;
+        if (bonEl) bonEl.innerText = totalBonus[k] > 0 ? `(+${totalBonus[k]})` : '';
+      });
+
+      const luckBadge = document.getElementById(`c${charId}-luck-badge`);
+      if (luckBadge) luckBadge.innerText = c.isLocked ? c.luck : '?';
+
+      const hpEl = document.getElementById(`c${charId}-val-hp`);
+      const atkEl = document.getElementById(`c${charId}-val-atk`);
+      const defEl = document.getElementById(`c${charId}-val-def`);
+      const spdEl = document.getElementById(`c${charId}-val-spd`);
+      const critEl = document.getElementById(`c${charId}-val-crit`);
+
+      if (hpEl) hpEl.innerText = c.derived.hp;
+      if (atkEl) atkEl.innerText = c.derived.atk;
+      if (defEl) defEl.innerText = c.derived.def;
+      if (spdEl) spdEl.innerText = c.derived.spd;
+      if (critEl) critEl.innerText = `${c.derived.crit}%`;
+    }
+
+    function toggleLockCharacter(charId) {
+      const c = characters[charId];
+      if (!c.isLocked) {
+        // Roll Luck between 1 and 3
+        c.luck = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+        c.isLocked = true;
+        recalcCharacter(charId);
+
+        const pill = document.getElementById(`c${charId}-status-pill`);
+        pill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-700/50';
+        pill.innerText = `설정 완료 (운: ${c.luck})`;
+
+        const lockBtn = document.getElementById(`c${charId}-lock-btn`);
+        lockBtn.innerText = '🔓 설정 수정하기';
+        lockBtn.className = 'py-2 px-3 rounded-lg font-bold text-xs bg-slate-800 hover:bg-slate-700 text-amber-200 border border-slate-700 transition';
+      } else {
+        c.isLocked = false;
+        const pill = document.getElementById(`c${charId}-status-pill`);
+        pill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-red-900/50 text-red-300 border border-red-700/50';
+        pill.innerText = '설정 미완료';
+
+        const lockBtn = document.getElementById(`c${charId}-lock-btn`);
+        lockBtn.innerText = '🔒 설정 완료 (행운 굴리기)';
+        lockBtn.className = 'py-2 px-3 rounded-lg font-bold text-xs bg-amber-600 hover:bg-amber-500 text-slate-950 transition shadow';
+      }
+    }
+
+    const STORAGE_KEY = 'mistletoe_duelling_presets_v2';
+
+    function getSavedPresets() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch(e) {
+        return [];
+      }
+    }
+
+    function savePresetsList(list) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      } catch(e) {}
+    }
+
+    function saveCharacterPreset(charId) {
+      const c = characters[charId];
+      const presets = getSavedPresets();
+      
+      const newPreset = {
+        id: 'preset_' + Date.now(),
+        name: c.name,
+        grade: c.grade,
+        house: c.house,
+        wandWood: c.wandWood,
+        wandCore: c.wandCore,
+        photoUrl: c.photoUrl,
+        invested: { ...c.invested },
+        luck: c.luck,
+        savedAt: new Date().toLocaleDateString('ko-KR')
+      };
+
+      presets.unshift(newPreset);
+      savePresetsList(presets.slice(0, 12));
+      renderPresetsUI();
+      showCustomAlert(`[${c.name}] 마법사가 브라우저 캐시에 저장되었습니다.`);
+    }
+
+    function loadPresetIntoSlot(presetIndex, targetCharId) {
+      const presets = getSavedPresets();
+      const p = presets[presetIndex];
+      if (!p) return;
+
+      const c = characters[targetCharId];
+      c.name = p.name;
+      c.grade = p.grade;
+      c.house = p.house;
+      c.wandWood = p.wandWood;
+      c.wandCore = p.wandCore;
+      c.photoUrl = p.photoUrl || 'https://placehold.co/150x150/111827/d3a625?text=Wizard';
+      c.invested = { ...p.invested };
+      c.luck = p.luck || 2;
+      c.isLocked = true;
+
+      renderSetupForms();
+      const pill = document.getElementById(`c${targetCharId}-status-pill`);
+      if (pill) {
+        pill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-700/50';
+        pill.innerText = `설정 완료 (운: ${c.luck})`;
+      }
+      showCustomAlert(`[${p.name}] 설정을 캐릭터 ${targetCharId}번에 불러왔습니다.`);
+    }
+
+    function deletePreset(index) {
+      const presets = getSavedPresets();
+      presets.splice(index, 1);
+      savePresetsList(presets);
+      renderPresetsUI();
+    }
+
+    function renderPresetsUI() {
+      const listEl = document.getElementById('savedPresetList');
+      if (!listEl) return;
+      const presets = getSavedPresets();
+
+      if (presets.length === 0) {
+        listEl.innerHTML = `
+          <div class="col-span-full py-6 text-center text-slate-500 text-xs italic">
+            저장된 캐릭터 프리셋이 없습니다. 원하는 캐릭터를 구성하고 [캐시에 저장]을 눌러보세요.
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = presets.map((p, idx) => `
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-2 hover:border-amber-700/40 transition">
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <img src="${p.photoUrl}" class="w-10 h-10 rounded-lg object-cover bg-slate-800 border border-amber-900/40" onerror="this.src='https://placehold.co/80x80/111827/d3a625?text=W';">
+            <div class="truncate">
+              <div class="font-bold text-xs text-amber-300 truncate">${p.name}</div>
+              <div class="text-[10px] text-slate-400">${p.house} · ${p.grade}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="loadPresetIntoSlot(${idx}, 1)" title="P1에 불러오기" class="px-2 py-1 bg-amber-900/40 hover:bg-amber-800/60 text-amber-200 text-[10px] font-bold rounded border border-amber-700/50">
+              P1
+            </button>
+            <button onclick="loadPresetIntoSlot(${idx}, 2)" title="P2에 불러오기" class="px-2 py-1 bg-blue-900/40 hover:bg-blue-800/60 text-blue-200 text-[10px] font-bold rounded border border-blue-700/50">
+              P2
+            </button>
+            <button onclick="deletePreset(${idx})" title="삭제" class="px-1.5 py-1 text-slate-500 hover:text-red-400 text-xs">
+              ✕
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function loadSamplePreset(type) {
+      if (type === 1) {
+        characters[1] = createInitialCharState(1, '해리 포터', '3학년', '그리핀도르', '사시나무', '용의 심근', 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80');
+        characters[1].invested = { will: 4, passion: 4, caution: 2, speed: 1 };
+        characters[1].isLocked = true;
+        characters[1].luck = 3;
+      } else {
+        characters[2] = createInitialCharState(2, '드라코 말포이', '3학년', '슬리데린', '주목', '유니콘의 털', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80');
+        characters[2].invested = { will: 2, passion: 3, caution: 4, speed: 2 };
+        characters[2].isLocked = true;
+        characters[2].luck = 2;
+      }
+      renderSetupForms();
+      [1, 2].forEach(id => {
+        const c = characters[id];
+        if (c.isLocked) {
+          const pill = document.getElementById(`c${id}-status-pill`);
+          if (pill) {
+            pill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-700/50';
+            pill.innerText = `설정 완료 (운: ${c.luck})`;
+          }
+        }
+      });
+    }
+
+    function switchView(target) {
+      const setupView = document.getElementById('viewSetup');
+      const arenaView = document.getElementById('viewArena');
+      const setupBtn = document.getElementById('tabSetupBtn');
+      const arenaBtn = document.getElementById('tabArenaBtn');
+
+      if (target === 'setup') {
+        setupView.classList.remove('hidden');
+        arenaView.classList.add('hidden');
+        setupBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-amber-700 to-amber-600 text-white shadow-md';
+        arenaBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-amber-200';
+      } else {
+        setupView.classList.add('hidden');
+        arenaView.classList.remove('hidden');
+        arenaBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-amber-700 to-amber-600 text-white shadow-md';
+        setupBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-amber-200';
+        syncArenaView();
+      }
+    }
+
+    function proceedToArena() {
+      if (!characters[1].isLocked || !characters[2].isLocked) {
+        showCustomAlert('두 캐릭터 모두 [설정 완료 (행운 굴리기)]를 진행해야 결투를 시작할 수 있습니다.');
+        return;
+      }
+      switchView('arena');
+    }
+
+    function syncArenaView() {
+      [1, 2].forEach(id => {
+        const c = characters[id];
+        document.getElementById(`a${id}-avatar`).src = c.photoUrl;
+        document.getElementById(`s${id}-img`).src = c.photoUrl;
+        document.getElementById(`a${id}-name`).innerText = c.name;
+        document.getElementById(`s${id}-label`).innerText = c.name;
+        document.getElementById(`a${id}-grade`).innerText = `${c.house} · ${c.grade}`;
+
+        const badge = document.getElementById(`a${id}-house-badge`);
+        const hStyle = GAME_CONFIG.houseColors[c.house] || { bg: 'bg-slate-800', text: 'text-slate-200', border: 'border-slate-700' };
+        badge.className = `text-[10px] uppercase tracking-wider px-2 py-0.5 rounded font-bold ${hStyle.bg} ${hStyle.text} border ${hStyle.border}`;
+        badge.innerText = c.house;
+
+        // Stats Display
+        document.getElementById(`a${id}-atk`).innerText = c.derived.atk;
+        document.getElementById(`a${id}-def`).innerText = c.derived.def;
+        document.getElementById(`a${id}-spd`).innerText = c.derived.spd;
+        document.getElementById(`a${id}-crit`).innerText = `${c.derived.crit}%`;
+
+        // Stance ratios
+        const totalReact = c.finalStats.passion + c.finalStats.caution;
+        const counterPct = totalReact === 0 ? 50 : Math.round((c.finalStats.passion / totalReact) * 100);
+        const defendPct = 100 - counterPct;
+        document.getElementById(`a${id}-react-ratio`).innerText = `방어 ${defendPct}% | 반격 ${counterPct}%`;
+        document.getElementById(`a${id}-def-ratio-bar`).style.width = `${defendPct}%`;
+        document.getElementById(`a${id}-atk-ratio-bar`).style.width = `${counterPct}%`;
+      });
+      updateArenaHpBars();
+    }
+
+    function updateArenaHpBars() {
+      [1, 2].forEach(id => {
+        const c = duelState.combatants ? duelState.combatants[id] : characters[id].derived;
+        const currentHp = Math.max(0, c.hp);
+        const maxHp = characters[id].derived.maxHp;
+        const pct = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+
+        document.getElementById(`a${id}-hp-text`).innerText = `${currentHp} / ${maxHp}`;
+        const bar = document.getElementById(`a${id}-hp-bar`);
+        bar.style.width = `${pct}%`;
+
+        if (pct <= 25) {
+          bar.className = 'h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-300';
+        } else if (pct <= 50) {
+          bar.className = 'h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-300';
+        } else {
+          bar.className = 'h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full transition-all duration-300';
+        }
+      });
+    }
+
+    const duelState = {
+      isActive: false,
+      currentTurn: 0,        // 1 to 7
+      currentSubPhase: 0,    // 0: Roll initiative, 1: First attack & react, 2: Second attack & react
+      firstId: 1,
+      secondId: 2,
+      combatants: null,
+      autoPlayTimer: null,
+      isAutoPlaying: false,
+      isFinished: false,
+      logs: []
+    };
+
+    function resetDuel(clearLog = true) {
+      if (duelState.autoPlayTimer) {
+        clearInterval(duelState.autoPlayTimer);
+        duelState.autoPlayTimer = null;
+      }
+      duelState.isActive = false;
+      duelState.currentTurn = 0;
+      duelState.currentSubPhase = 0;
+      duelState.isFinished = false;
+      duelState.isAutoPlaying = false;
+      duelState.combatants = {
+        1: {
+          hp: characters[1].derived.maxHp,
+          totalDamageDealt: 0,
+          reactionDefendCount: 0,
+          reactionCounterCount: 0
+        },
+        2: {
+          hp: characters[2].derived.maxHp,
+          totalDamageDealt: 0,
+          reactionDefendCount: 0,
+          reactionCounterCount: 0
+        }
+      };
+
+      document.getElementById('btnStartDuel').disabled = false;
+      document.getElementById('btnNextPhase').disabled = true;
+      document.getElementById('btnAutoPlay').disabled = true;
+      document.getElementById('btnAutoPlay').innerText = '⚡ 자동 진행';
+
+      document.getElementById('arenaRoundIndicator').innerText = 'ROUND 0 / 7';
+      document.getElementById('initiativeIndicator').innerText = '결투 개시 대기 중';
+      document.getElementById('a1-total-dmg').innerText = '0';
+      document.getElementById('a2-total-dmg').innerText = '0';
+      document.getElementById('a1-stance-box').innerText = '대기 중';
+      document.getElementById('a2-stance-box').innerText = '대기 중';
+      document.getElementById('a1-stance-box').className = 'mt-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center text-xs font-semibold text-slate-400';
+      document.getElementById('a2-stance-box').className = 'mt-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center text-xs font-semibold text-slate-400';
+
+      updateArenaHpBars();
+
+      if (clearLog) {
+        const logWin = document.getElementById('duelLogWindow');
+        logWin.innerHTML = `
+          <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/30 text-amber-200/90 leading-relaxed text-center font-cinzel">
+            ✦ 양쪽 마법사의 지팡이가 겨눠졌습니다. 준비가 완료되면 [결투 시작]을 누르세요. ✦
+          </div>
+        `;
+      }
+    }
+
+    function startDuel() {
+      if (!characters[1].isLocked || !characters[2].isLocked) {
+        showCustomAlert('두 캐릭터의 설정을 완료한 후 결투를 진행해 주세요.');
+        return;
+      }
+      resetDuel(false);
+      duelState.isActive = true;
+      duelState.currentTurn = 1;
+      duelState.currentSubPhase = 0;
+
+      document.getElementById('btnStartDuel').disabled = true;
+      document.getElementById('btnNextPhase').disabled = false;
+      document.getElementById('btnAutoPlay').disabled = false;
+
+      appendLog(`🔔 <strong>미슬토 위저드 결투 클럽의 결투가 개시되었습니다! (총 7턴 규정)</strong>`, 'system');
+      processNextPhase();
+    }
+
+    function toggleAutoPlay() {
+      if (!duelState.isActive || duelState.isFinished) return;
+
+      if (duelState.isAutoPlaying) {
+        clearInterval(duelState.autoPlayTimer);
+        duelState.autoPlayTimer = null;
+        duelState.isAutoPlaying = false;
+        document.getElementById('btnAutoPlay').innerText = '⚡ 자동 진행';
+      } else {
+        duelState.isAutoPlaying = true;
+        document.getElementById('btnAutoPlay').innerText = '⏸ 일시 정지';
+        duelState.autoPlayTimer = setInterval(() => {
+          if (duelState.isFinished || !duelState.isActive) {
+            clearInterval(duelState.autoPlayTimer);
+            duelState.autoPlayTimer = null;
+            duelState.isAutoPlaying = false;
+            document.getElementById('btnAutoPlay').innerText = '⚡ 자동 진행';
+          } else {
+            processNextPhase();
+          }
+        }, 1100);
+      }
+    }
+
+    function processNextPhase() {
+      if (!duelState.isActive || duelState.isFinished) return;
+
+      if (duelState.currentSubPhase === 0) {
+        // Phase 0: Roll initiative for the turn
+        executeInitiativeRoll();
+        duelState.currentSubPhase = 1;
+      } else if (duelState.currentSubPhase === 1) {
+        // Phase 1: First Attacker attacks -> Second Attacker reacts -> Intermediate Settlement
+        executeCombatExchange(duelState.firstId, duelState.secondId, '중간 정산');
+        if (checkEndCondition(false)) {
+          finishDuel();
+          return;
+        }
+        duelState.currentSubPhase = 2;
+      } else if (duelState.currentSubPhase === 2) {
+        // Phase 2: Second Attacker attacks -> First Attacker reacts -> Final Settlement
+        executeCombatExchange(duelState.secondId, duelState.firstId, '최종 정산');
+        if (checkEndCondition(true)) {
+          finishDuel();
+          return;
+        }
+        // Advance Turn
+        duelState.currentTurn++;
+        if (duelState.currentTurn > 7) {
+          finishDuel();
+          return;
+        }
+        duelState.currentSubPhase = 0;
+        document.getElementById('arenaRoundIndicator').innerText = `ROUND ${duelState.currentTurn} / 7`;
+      }
+    }
+
+    function executeInitiativeRoll() {
+      const p1Spd = characters[1].derived.spd;
+      const p2Spd = characters[2].derived.spd;
+
+      // Roll 1 ~ Agility
+      const roll1 = Math.floor(Math.random() * p1Spd) + 1;
+      const roll2 = Math.floor(Math.random() * p2Spd) + 1;
+
+      let first = 1;
+      let reason = '';
+
+      if (roll1 > roll2) {
+        first = 1;
+        reason = `주사위 우세 (${roll1} vs ${roll2})`;
+      } else if (roll2 > roll1) {
+        first = 2;
+        reason = `주사위 우세 (${roll2} vs ${roll1})`;
+      } else {
+        // Tied: Higher base speed goes first, else 50% random
+        if (p1Spd > p2Spd) {
+          first = 1;
+          reason = `동점(${roll1}), 기본 민첩성 우세 (${p1Spd} > ${p2Spd})`;
+        } else if (p2Spd > p1Spd) {
+          first = 2;
+          reason = `동점(${roll2}), 기본 민첩성 우세 (${p2Spd} > ${p1Spd})`;
+        } else {
+          first = Math.random() < 0.5 ? 1 : 2;
+          reason = `주사위 및 민첩성 동일 (${roll1}), 무작위 추첨`;
+        }
+      }
+
+      duelState.firstId = first;
+      duelState.secondId = first === 1 ? 2 : 1;
+
+      document.getElementById('arenaRoundIndicator').innerText = `ROUND ${duelState.currentTurn} / 7`;
+      document.getElementById('initiativeIndicator').innerHTML = `
+        <span class="text-amber-400 font-bold">${characters[first].name}</span> 선공 (${reason})
+      `;
+
+      appendLog(`
+        <div class="bg-indigo-950/40 border border-indigo-800/40 p-2 rounded text-xs text-indigo-200">
+          🎲 <strong>[턴 ${duelState.currentTurn} 선공 결정]</strong> 
+          ${characters[1].name}: <strong>${roll1}</strong> (민첩 ${p1Spd}) vs 
+          ${characters[2].name}: <strong>${roll2}</strong> (민첩 ${p2Spd}) ➔ 
+          <span class="text-amber-300 font-bold">${characters[first].name} 선공!</span>
+        </div>
+      `, 'initiative');
+    }
+
+    function executeCombatExchange(attackerId, defenderId, settlementName) {
+      const atkChar = characters[attackerId];
+      const defChar = characters[defenderId];
+      const atkStats = atkChar.derived;
+      const defStats = defChar.derived;
+
+      // 1. Calculate Attacker's Attack Damage: Math.floor(random(1, ATK) + ATK/3)
+      const atkRand = Math.floor(Math.random() * atkStats.atk) + 1;
+      let rawAtkDamage = Math.floor(atkRand + (atkStats.atk / 3));
+      
+      // Crit Check
+      const isAtkCrit = (Math.random() * 100) < atkStats.crit;
+      if (isAtkCrit) {
+        rawAtkDamage += 5;
+      }
+
+      // 2. Defender Decision: Defend vs Counter
+      // Ratio of passion vs caution
+      const defPassion = defChar.finalStats.passion;
+      const defCaution = defChar.finalStats.caution;
+      const reactSum = defPassion + defCaution;
+      const counterChance = reactSum === 0 ? 50 : (defPassion / reactSum) * 100;
+      
+      const rollReact = Math.random() * 100;
+      const choseCounter = rollReact < counterChance;
+
+      let logDetail = '';
+      let dmgTakenByDefender = 0;
+      let dmgTakenByAttacker = 0;
+
+      // Visual indicator updates
+      setStanceDisplay(attackerId, '⚔️ 공격 수행', 'bg-rose-950/80 text-rose-300 border-rose-700');
+
+      if (!choseCounter) {
+        // [방어 선택]
+        duelState.combatants[defenderId].reactionDefendCount++;
+        setStanceDisplay(defenderId, '🛡️ 방어 태세', 'bg-sky-950/80 text-sky-300 border-sky-700');
+
+        // 방어량: Math.floor(random(1, DEF) + DEF/2)
+        const defRand = Math.floor(Math.random() * defStats.def) + 1;
+        let defAmount = Math.floor(defRand + (defStats.def / 2));
+        const isDefCrit = (Math.random() * 100) < defStats.crit;
+        if (isDefCrit) {
+          defAmount += 5;
+        }
+
+        dmgTakenByDefender = Math.max(0, rawAtkDamage - defAmount);
+        duelState.combatants[defenderId].hp -= dmgTakenByDefender;
+        duelState.combatants[attackerId].totalDamageDealt += dmgTakenByDefender;
+
+        logDetail = `
+          <div class="space-y-1">
+            <div>
+              <span class="text-rose-400 font-bold">${atkChar.name}</span>의 공격! 
+              주문 위력 <strong>${rawAtkDamage}</strong>
+              ${isAtkCrit ? '<span class="text-yellow-400 font-bold ml-1">★ 치명타(+5)!</span>' : ''}
+            </div>
+            <div>
+              <span class="text-sky-400 font-bold">${defChar.name}</span>의 [방어] 선택! 
+              방어량 <strong>${defAmount}</strong> 
+              ${isDefCrit ? '<span class="text-yellow-400 font-bold ml-1">★ 완벽한 방어(+5)!</span>' : ''}
+            </div>
+            <div class="text-slate-300">
+              ➔ 방어로 경감 후 <strong>${dmgTakenByDefender}</strong>의 유효 피해를 입힘 
+              <span class="text-slate-400">(${defChar.name} 잔여 HP: ${Math.max(0, duelState.combatants[defenderId].hp)})</span>
+            </div>
+          </div>
+        `;
+      } else {
+        // [반격 선택]
+        duelState.combatants[defenderId].reactionCounterCount++;
+        setStanceDisplay(defenderId, '⚡ 반격 태세', 'bg-amber-950/80 text-amber-300 border-amber-700');
+
+        // Defender takes full damage
+        dmgTakenByDefender = rawAtkDamage;
+        duelState.combatants[defenderId].hp -= dmgTakenByDefender;
+        duelState.combatants[attackerId].totalDamageDealt += dmgTakenByDefender;
+
+        // Defender deals counter damage: Math.floor(random(1, max(1, ATK - 4)) + ATK/4)
+        const counterMax = Math.max(1, defStats.atk - 4);
+        const counterRand = Math.floor(Math.random() * counterMax) + 1;
+        let counterDmg = Math.floor(counterRand + (defStats.atk / 4));
+        const isCounterCrit = (Math.random() * 100) < defStats.crit;
+        if (isCounterCrit) {
+          counterDmg += 5;
+        }
+
+        dmgTakenByAttacker = counterDmg;
+        duelState.combatants[attackerId].hp -= dmgTakenByAttacker;
+        duelState.combatants[defenderId].totalDamageDealt += dmgTakenByAttacker;
+
+        logDetail = `
+          <div class="space-y-1">
+            <div>
+              <span class="text-rose-400 font-bold">${atkChar.name}</span>의 공격! 
+              주문 위력 <strong>${rawAtkDamage}</strong>
+              ${isAtkCrit ? '<span class="text-yellow-400 font-bold ml-1">★ 치명타(+5)!</span>' : ''}
+            </div>
+            <div class="text-amber-300 font-semibold">
+              ➔ <span class="text-sky-300 font-bold">${defChar.name}</span>의 [반격] 선택! 피해를 온전히 받으며 즉시 응수 주문 발동!
+            </div>
+            <div>
+              <span class="text-yellow-400 font-bold">${defChar.name}</span>의 반격 피해 <strong>${counterDmg}</strong>
+              ${isCounterCrit ? '<span class="text-yellow-400 font-bold ml-1">★ 치명적 반격(+5)!</span>' : ''}
+            </div>
+            <div class="text-slate-300">
+              ➔ [동시 격돌] ${defChar.name} -${dmgTakenByDefender} 피해 (HP: ${Math.max(0, duelState.combatants[defenderId].hp)}) / 
+              ${atkChar.name} -${dmgTakenByAttacker} 피해 (HP: ${Math.max(0, duelState.combatants[attackerId].hp)})
+            </div>
+          </div>
+        `;
+      }
+
+      // Update Cumulative total displays
+      document.getElementById('a1-total-dmg').innerText = duelState.combatants[1].totalDamageDealt;
+      document.getElementById('a2-total-dmg').innerText = duelState.combatants[2].totalDamageDealt;
+      updateArenaHpBars();
+
+      appendLog(`
+        <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700">
+          <div class="text-[10px] text-amber-400/70 font-mono mb-1">TURN ${duelState.currentTurn} · ${settlementName}</div>
+          ${logDetail}
+        </div>
+      `, 'exchange');
+    }
+
+    function setStanceDisplay(charId, text, colorClasses) {
+      const box = document.getElementById(`a${charId}-stance-box`);
+      if (box) {
+        box.className = `mt-3 p-2.5 rounded-xl border text-center text-xs font-bold transition-all ${colorClasses}`;
+        box.innerText = text;
+      }
+    }
+
+    function appendLog(htmlContent, type) {
+      const logWin = document.getElementById('duelLogWindow');
+      const item = document.createElement('div');
+      item.innerHTML = htmlContent;
+      logWin.appendChild(item);
+      logWin.scrollTop = logWin.scrollHeight;
+    }
+
+    function checkEndCondition(isEndOfTurn) {
+      const hp1 = duelState.combatants[1].hp;
+      const hp2 = duelState.combatants[2].hp;
+
+      // Knockout rule
+      if (hp1 <= 0 || hp2 <= 0) return true;
+
+      // Round 7 Completed Final Settlement
+      if (isEndOfTurn && duelState.currentTurn >= 7) return true;
+
+      return false;
+    }
+
+    function finishDuel() {
+      duelState.isFinished = true;
+      duelState.isActive = false;
+      if (duelState.autoPlayTimer) {
+        clearInterval(duelState.autoPlayTimer);
+        duelState.autoPlayTimer = null;
+      }
+
+      document.getElementById('btnNextPhase').disabled = true;
+      document.getElementById('btnAutoPlay').disabled = true;
+      document.getElementById('btnStartDuel').disabled = false;
+
+      const hp1 = Math.max(0, duelState.combatants[1].hp);
+      const hp2 = Math.max(0, duelState.combatants[2].hp);
+      const dmg1 = duelState.combatants[1].totalDamageDealt;
+      const dmg2 = duelState.combatants[2].totalDamageDealt;
+
+      let winnerId = null; // 1, 2, or 0 (Draw)
+      let verdictTitle = '';
+      let verdictReason = '';
+
+      // Judgment Rules:
+      // 1. Knockout (HP <= 0)
+      if (hp1 <= 0 && hp2 <= 0) {
+        if (dmg1 > dmg2) {
+          winnerId = 1;
+          verdictReason = '동시 실신! 더 많은 누적 피해를 가한 캐릭터 1 승리 판정.';
+        } else if (dmg2 > dmg1) {
+          winnerId = 2;
+          verdictReason = '동시 실신! 더 많은 누적 피해를 가한 캐릭터 2 승리 판정.';
+        } else {
+          winnerId = 0;
+          verdictReason = '동시 실신 및 누적 피해 동률로 무승부(Draw) 처리되었습니다.';
+        }
+      } else if (hp1 <= 0) {
+        winnerId = 2;
+        verdictReason = `${characters[1].name}의 체력이 0이 되어 결투 불능 상태가 되었습니다.`;
+      } else if (hp2 <= 0) {
+        winnerId = 1;
+        verdictReason = `${characters[2].name}의 체력이 0이 되어 결투 불능 상태가 되었습니다.`;
+      } else {
+        // 7 Turns finished without KO
+        if (hp1 > hp2) {
+          winnerId = 1;
+          verdictReason = `7턴 최종 정산 결과 잔여 체력 우세 (${hp1} vs ${hp2})로 판정승을 거두었습니다.`;
+        } else if (hp2 > hp1) {
+          winnerId = 2;
+          verdictReason = `7턴 최종 정산 결과 잔여 체력 우세 (${hp2} vs ${hp1})로 판정승을 거두었습니다.`;
+        } else {
+          // Tied HP -> Compare total damage dealt
+          if (dmg1 > dmg2) {
+            winnerId = 1;
+            verdictReason = `체력 동률 (${hp1} vs ${hp2})! 누적 총 피해량 우세 (${dmg1} vs ${dmg2})로 승리 판정.`;
+          } else if (dmg2 > dmg1) {
+            winnerId = 2;
+            verdictReason = `체력 동률 (${hp2} vs ${hp1})! 누적 총 피해량 우세 (${dmg2} vs ${dmg1})로 승리 판정.`;
+          } else {
+            winnerId = 0;
+            verdictReason = `체력과 가한 누적 피해량이 완벽히 동일하여 무승부(Draw)로 판정되었습니다.`;
+          }
+        }
+      }
+
+      if (winnerId === 1) {
+        verdictTitle = `🏆 ${characters[1].name} (${characters[1].house}) 승리!`;
+      } else if (winnerId === 2) {
+        verdictTitle = `🏆 ${characters[2].name} (${characters[2].house}) 승리!`;
+      } else {
+        verdictTitle = `⚖️ 결투 무승부 (DRAW)`;
+      }
+
+      // Show Result Modal
+      document.getElementById('resultWinnerText').innerText = verdictTitle;
+      document.getElementById('resultReasonText').innerText = verdictReason;
+
+      document.getElementById('resP1Name').innerText = `${characters[1].name} (${characters[1].house} · ${characters[1].grade})`;
+      document.getElementById('resP1HP').innerText = hp1;
+      document.getElementById('resP1Dmg').innerText = dmg1;
+
+      document.getElementById('resP2Name').innerText = `${characters[2].name} (${characters[2].house} · ${characters[2].grade})`;
+      document.getElementById('resP2HP').innerText = hp2;
+      document.getElementById('resP2Dmg').innerText = dmg2;
+
+      document.getElementById('resultModal').classList.remove('hidden');
+
+      appendLog(`
+        <div class="p-3 rounded-xl bg-gradient-to-r from-amber-950 to-slate-900 border border-yellow-500/50 text-center space-y-1">
+          <div class="font-cinzel text-base font-bold text-yellow-300">⚔️ [결투 종료] ${verdictTitle} ⚔️</div>
+          <div class="text-xs text-slate-300">${verdictReason}</div>
+        </div>
+      `, 'verdict');
+    }
+
+    function closeResultModal() {
+      document.getElementById('resultModal').classList.add('hidden');
+    }
+
+    function downloadResultImage() {
+      const captureEl = document.getElementById('captureResultCard');
+      if (!captureEl) return;
+
+      const btn = document.getElementById('btnDownloadImage');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span>⏳</span> 이미지 생성 중...';
+      btn.disabled = true;
+
+      html2canvas(captureEl, {
+        backgroundColor: '#090d16',
+        scale: 2,
+        useCORS: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Mistletoe_Duel_Result_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }).catch(err => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        showCustomAlert('이미지 캡처 중 오류가 발생했습니다. 브라우저 설정을 확인해주세요.');
+      });
+    }
+
+    window.onload = function() {
+      renderSetupForms();
+      renderPresetsUI();
+      resetDuel(true);
+      toggleLockCharacter(1);
+      toggleLockCharacter(2);
+      syncArenaView();
+    };
+  </script>
+</body>
+</html>
