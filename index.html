@@ -76,7 +76,6 @@
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-300 flex items-center justify-center text-slate-950 font-medieval text-2xl shadow-lg border border-yellow-200">
-          ⚡
         </div>
         <div>
           <h1 class="font-cinzel text-xl sm:text-2xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-100">
@@ -163,7 +162,7 @@
 
     <section id="viewArena" class="hidden space-y-5">
       <!-- Duel Arena Main Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         
         <!-- Left: Character 1 Arena Card -->
         <div id="arenaCard1" class="lg:col-span-3 bg-slate-900/90 rounded-2xl p-4 border border-amber-800/40 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all">
@@ -233,10 +232,10 @@
           </div>
         </div>
 
-        <!-- Center: Battle Stage & Log Window -->
-        <div class="lg:col-span-6 flex flex-col bg-slate-950/90 rounded-2xl border border-amber-800/40 shadow-2xl overflow-hidden min-h-[520px]">
+        <!-- Center: Battle Stage & Log Window (Fixed Height & Internal Scroll) -->
+        <div class="lg:col-span-6 flex flex-col bg-slate-950/90 rounded-2xl border border-amber-800/40 shadow-2xl overflow-hidden h-[600px]">
           <!-- Arena Header & Round Counter -->
-          <div class="bg-gradient-to-b from-slate-900 to-black px-4 py-3 border-b border-amber-900/40 flex items-center justify-between">
+          <div class="bg-gradient-to-b from-slate-900 to-black px-4 py-3 border-b border-amber-900/40 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
               <span id="arenaRoundIndicator" class="font-cinzel text-sm sm:text-base font-bold text-amber-300">
@@ -249,31 +248,31 @@
           </div>
 
           <!-- Magical Visual Stage -->
-          <div id="visualStage" class="relative h-28 bg-gradient-to-b from-indigo-950/20 via-slate-950 to-slate-950 border-b border-slate-900 flex items-center justify-around px-4 overflow-hidden">
+          <div id="visualStage" class="relative h-24 shrink-0 bg-gradient-to-b from-indigo-950/20 via-slate-950 to-slate-950 border-b border-slate-900 flex items-center justify-around px-4 overflow-hidden">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none"></div>
             
             <div id="stageAvatar1" class="text-center transition-all duration-300 transform">
-              <div class="w-14 h-14 rounded-full border-2 border-amber-400/80 overflow-hidden mx-auto shadow-lg shadow-amber-500/10 bg-slate-800">
+              <div class="w-12 h-12 rounded-full border-2 border-amber-400/80 overflow-hidden mx-auto shadow-lg shadow-amber-500/10 bg-slate-800">
                 <img id="s1-img" src="" class="w-full h-full object-cover" alt="p1">
               </div>
-              <span id="s1-label" class="text-[11px] font-bold text-slate-300 mt-1 block truncate max-w-[100px]">Player 1</span>
+              <span id="s1-label" class="text-[11px] font-bold text-slate-300 mt-0.5 block truncate max-w-[100px]">Player 1</span>
             </div>
 
             <!-- Center VS -->
             <div id="stageClash" class="flex flex-col items-center justify-center">
-              <div class="text-3xl font-medieval text-amber-400 filter drop-shadow-md">VS</div>
+              <div class="text-2xl font-medieval text-amber-400 filter drop-shadow-md">VS</div>
               <span id="clashDetail" class="text-[10px] text-amber-300/70 font-mono tracking-tighter">DUEL LOG</span>
             </div>
 
             <div id="stageAvatar2" class="text-center transition-all duration-300 transform">
-              <div class="w-14 h-14 rounded-full border-2 border-blue-400/80 overflow-hidden mx-auto shadow-lg shadow-blue-500/10 bg-slate-800">
+              <div class="w-12 h-12 rounded-full border-2 border-blue-400/80 overflow-hidden mx-auto shadow-lg shadow-blue-500/10 bg-slate-800">
                 <img id="s2-img" src="" class="w-full h-full object-cover" alt="p2">
               </div>
-              <span id="s2-label" class="text-[11px] font-bold text-slate-300 mt-1 block truncate max-w-[100px]">Player 2</span>
+              <span id="s2-label" class="text-[11px] font-bold text-slate-300 mt-0.5 block truncate max-w-[100px]">Player 2</span>
             </div>
           </div>
 
-          <!-- Log Feed Window -->
+          <!-- Log Feed Window: Scrollable -->
           <div id="duelLogWindow" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 font-sans text-xs sm:text-sm bg-slate-950/80">
             <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/30 text-amber-200/90 leading-relaxed text-center font-cinzel">
               ✦ 양쪽 마법사의 지팡이가 겨눠졌습니다. 준비가 완료되면 [결투 시작]을 누르세요. ✦
@@ -281,17 +280,17 @@
           </div>
 
           <!-- Bottom Action Buttons -->
-          <div class="bg-black/80 border-t border-slate-800 p-3 sm:p-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            <button id="btnStartDuel" onclick="startDuel()" class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold rounded-lg shadow-lg text-xs sm:text-sm transition-all">
+          <div class="bg-black/80 border-t border-slate-800 p-3 sm:p-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 shrink-0">
+            <button id="btnStartDuel" onclick="startDuel()" class="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold rounded-lg shadow-lg text-xs sm:text-sm transition-all">
               ⚔️ 결투 시작
             </button>
-            <button id="btnNextPhase" onclick="processNextPhase()" disabled class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-200 font-bold rounded-lg border border-amber-700/40 text-xs sm:text-sm transition-all disabled:opacity-40 disabled:pointer-events-none">
+            <button id="btnNextPhase" onclick="processNextPhase()" disabled class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-amber-200 font-bold rounded-lg border border-amber-700/40 text-xs sm:text-sm transition-all disabled:opacity-40 disabled:pointer-events-none">
               다음 행동 ➔
             </button>
-            <button id="btnAutoPlay" onclick="toggleAutoPlay()" disabled class="px-4 py-2.5 bg-indigo-900/60 hover:bg-indigo-800/80 text-indigo-200 font-medium rounded-lg border border-indigo-700/50 text-xs sm:text-sm transition-all disabled:opacity-40 disabled:pointer-events-none">
+            <button id="btnAutoPlay" onclick="toggleAutoPlay()" disabled class="px-4 py-2 bg-indigo-900/60 hover:bg-indigo-800/80 text-indigo-200 font-medium rounded-lg border border-indigo-700/50 text-xs sm:text-sm transition-all disabled:opacity-40 disabled:pointer-events-none">
               ⚡ 자동 진행
             </button>
-            <button id="btnResetDuel" onclick="resetDuel(true)" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium rounded-lg border border-slate-700 text-xs sm:text-sm transition-all">
+            <button id="btnResetDuel" onclick="resetDuel(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium rounded-lg border border-slate-700 text-xs sm:text-sm transition-all">
               🔄 리셋
             </button>
           </div>
@@ -399,7 +398,7 @@
             </div>
             
             <div class="text-[10px] text-amber-300/40 pt-2 font-mono">
-              Mistletoe Wizard FIght Club • Hogwarts FIght Code
+              Mistletoe Wizard FIght Club • meal_writes
             </div>
           </div>
 
@@ -430,7 +429,7 @@
   </main>
 
   <script>
-    /* In-App Alert Replacement (No window.alert) */
+    /* In-App Alert Replacement */
     function showCustomAlert(msg) {
       document.getElementById('customAlertMessage').innerText = msg;
       document.getElementById('customAlertModal').classList.remove('hidden');
@@ -444,7 +443,7 @@
       if (gradeStr === '1학년' || gradeStr === '2학년') return 9;
       if (gradeStr === '3학년' || gradeStr === '4학년' || gradeStr === '5학년') return 11;
       if (gradeStr === '6학년' || gradeStr === '7학년') return 13;
-      return 11; // default fallback
+      return 11;
     }
 
     const GAME_CONFIG = {
@@ -484,7 +483,7 @@
       return {
         id,
         name,
-        grade, // '1학년' ~ '7학년'
+        grade,
         house,
         wandWood: wood,
         wandCore: core,
@@ -715,7 +714,6 @@
       const currentVal = c.invested[statKey];
       const nextVal = currentVal + delta;
       
-      // Constraint: 0 ~ 5 per stat
       if (nextVal < 0 || nextVal > 5) return;
       
       const currentSum = getInvestedSum(charId);
@@ -733,11 +731,8 @@
       const maxPts = getPointsByGrade(c.grade);
       const usedPts = getInvestedSum(charId);
 
-      // House Bonus
       const hBonus = GAME_CONFIG.houseBonuses[c.house] || { will: 0, passion: 0, caution: 0, speed: 0 };
-      // Wand Wood Bonus
       const wBonus = GAME_CONFIG.woodBonuses[c.wandWood] || { will: 0, passion: 0, caution: 0, speed: 0 };
-      // Wand Core Bonus
       const cBonus = GAME_CONFIG.coreBonuses[c.wandCore] || { caution: 0, passion: 0 };
 
       const totalBonus = {
@@ -755,12 +750,6 @@
         luck: c.luck
       };
 
-      // Rules:
-      // Initial HP = 100 + (의지 * 10)
-      // Base ATK = 10 + (열정 * 2)
-      // Base DEF = 10 + (신중 * 2)
-      // Agility = 1 + (속도 * 1)
-      // Crit Chance = 10% + (운 * 2)%
       c.derived = {
         hp: 100 + (c.finalStats.will * 10),
         maxHp: 100 + (c.finalStats.will * 10),
@@ -770,7 +759,6 @@
         crit: 10 + (c.finalStats.luck * 2)
       };
 
-      // Update UI elements
       const budgetEl = document.getElementById(`c${charId}-budget-display`);
       if (budgetEl) {
         budgetEl.innerText = `${usedPts} / ${maxPts}P`;
@@ -807,8 +795,7 @@
     function toggleLockCharacter(charId) {
       const c = characters[charId];
       if (!c.isLocked) {
-        // Roll Luck between 1 and 3
-        c.luck = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+        c.luck = Math.floor(Math.random() * 3) + 1;
         c.isLocked = true;
         recalcCharacter(charId);
 
@@ -1048,8 +1035,8 @@
 
     const duelState = {
       isActive: false,
-      currentTurn: 0,        // 1 to 7
-      currentSubPhase: 0,    // 0: Roll initiative, 1: First attack & react, 2: Second attack & react
+      currentTurn: 0,
+      currentSubPhase: 0,
       firstId: 1,
       secondId: 2,
       combatants: null,
@@ -1124,7 +1111,7 @@
       document.getElementById('btnNextPhase').disabled = false;
       document.getElementById('btnAutoPlay').disabled = false;
 
-      appendLog(`🔔 <strong>미슬토 위저드 결투 클럽의 결투가 개시되었습니다! (총 7턴 규정)</strong>`, 'system');
+      appendLog(`🔔 <strong>미슬토 위저드 결투 클럽의 결투가 개시되었습니다!)</strong>`, 'system');
       processNextPhase();
     }
 
@@ -1156,11 +1143,9 @@
       if (!duelState.isActive || duelState.isFinished) return;
 
       if (duelState.currentSubPhase === 0) {
-        // Phase 0: Roll initiative for the turn
         executeInitiativeRoll();
         duelState.currentSubPhase = 1;
       } else if (duelState.currentSubPhase === 1) {
-        // Phase 1: First Attacker attacks -> Second Attacker reacts -> Intermediate Settlement
         executeCombatExchange(duelState.firstId, duelState.secondId, '중간 정산');
         if (checkEndCondition(false)) {
           finishDuel();
@@ -1168,13 +1153,11 @@
         }
         duelState.currentSubPhase = 2;
       } else if (duelState.currentSubPhase === 2) {
-        // Phase 2: Second Attacker attacks -> First Attacker reacts -> Final Settlement
         executeCombatExchange(duelState.secondId, duelState.firstId, '최종 정산');
         if (checkEndCondition(true)) {
           finishDuel();
           return;
         }
-        // Advance Turn
         duelState.currentTurn++;
         if (duelState.currentTurn > 7) {
           finishDuel();
@@ -1189,7 +1172,6 @@
       const p1Spd = characters[1].derived.spd;
       const p2Spd = characters[2].derived.spd;
 
-      // Roll 1 ~ Agility
       const roll1 = Math.floor(Math.random() * p1Spd) + 1;
       const roll2 = Math.floor(Math.random() * p2Spd) + 1;
 
@@ -1203,7 +1185,6 @@
         first = 2;
         reason = `주사위 우세 (${roll2} vs ${roll1})`;
       } else {
-        // Tied: Higher base speed goes first, else 50% random
         if (p1Spd > p2Spd) {
           first = 1;
           reason = `동점(${roll1}), 기본 민첩성 우세 (${p1Spd} > ${p2Spd})`;
@@ -1240,18 +1221,14 @@
       const atkStats = atkChar.derived;
       const defStats = defChar.derived;
 
-      // 1. Calculate Attacker's Attack Damage: Math.floor(random(1, ATK) + ATK/3)
       const atkRand = Math.floor(Math.random() * atkStats.atk) + 1;
       let rawAtkDamage = Math.floor(atkRand + (atkStats.atk / 3));
       
-      // Crit Check
       const isAtkCrit = (Math.random() * 100) < atkStats.crit;
       if (isAtkCrit) {
         rawAtkDamage += 5;
       }
 
-      // 2. Defender Decision: Defend vs Counter
-      // Ratio of passion vs caution
       const defPassion = defChar.finalStats.passion;
       const defCaution = defChar.finalStats.caution;
       const reactSum = defPassion + defCaution;
@@ -1264,15 +1241,12 @@
       let dmgTakenByDefender = 0;
       let dmgTakenByAttacker = 0;
 
-      // Visual indicator updates
       setStanceDisplay(attackerId, '⚔️ 공격 수행', 'bg-rose-950/80 text-rose-300 border-rose-700');
 
       if (!choseCounter) {
-        // [방어 선택]
         duelState.combatants[defenderId].reactionDefendCount++;
         setStanceDisplay(defenderId, '🛡️ 방어 태세', 'bg-sky-950/80 text-sky-300 border-sky-700');
 
-        // 방어량: Math.floor(random(1, DEF) + DEF/2)
         const defRand = Math.floor(Math.random() * defStats.def) + 1;
         let defAmount = Math.floor(defRand + (defStats.def / 2));
         const isDefCrit = (Math.random() * 100) < defStats.crit;
@@ -1303,16 +1277,13 @@
           </div>
         `;
       } else {
-        // [반격 선택]
         duelState.combatants[defenderId].reactionCounterCount++;
         setStanceDisplay(defenderId, '⚡ 반격 태세', 'bg-amber-950/80 text-amber-300 border-amber-700');
 
-        // Defender takes full damage
         dmgTakenByDefender = rawAtkDamage;
         duelState.combatants[defenderId].hp -= dmgTakenByDefender;
         duelState.combatants[attackerId].totalDamageDealt += dmgTakenByDefender;
 
-        // Defender deals counter damage: Math.floor(random(1, max(1, ATK - 4)) + ATK/4)
         const counterMax = Math.max(1, defStats.atk - 4);
         const counterRand = Math.floor(Math.random() * counterMax) + 1;
         let counterDmg = Math.floor(counterRand + (defStats.atk / 4));
@@ -1347,7 +1318,6 @@
         `;
       }
 
-      // Update Cumulative total displays
       document.getElementById('a1-total-dmg').innerText = duelState.combatants[1].totalDamageDealt;
       document.getElementById('a2-total-dmg').innerText = duelState.combatants[2].totalDamageDealt;
       updateArenaHpBars();
@@ -1380,10 +1350,7 @@
       const hp1 = duelState.combatants[1].hp;
       const hp2 = duelState.combatants[2].hp;
 
-      // Knockout rule
       if (hp1 <= 0 || hp2 <= 0) return true;
-
-      // Round 7 Completed Final Settlement
       if (isEndOfTurn && duelState.currentTurn >= 7) return true;
 
       return false;
@@ -1406,12 +1373,10 @@
       const dmg1 = duelState.combatants[1].totalDamageDealt;
       const dmg2 = duelState.combatants[2].totalDamageDealt;
 
-      let winnerId = null; // 1, 2, or 0 (Draw)
+      let winnerId = null;
       let verdictTitle = '';
       let verdictReason = '';
 
-      // Judgment Rules:
-      // 1. Knockout (HP <= 0)
       if (hp1 <= 0 && hp2 <= 0) {
         if (dmg1 > dmg2) {
           winnerId = 1;
@@ -1430,7 +1395,6 @@
         winnerId = 1;
         verdictReason = `${characters[2].name}의 체력이 0이 되어 결투 불능 상태가 되었습니다.`;
       } else {
-        // 7 Turns finished without KO
         if (hp1 > hp2) {
           winnerId = 1;
           verdictReason = `7턴 최종 정산 결과 잔여 체력 우세 (${hp1} vs ${hp2})로 판정승을 거두었습니다.`;
@@ -1438,7 +1402,6 @@
           winnerId = 2;
           verdictReason = `7턴 최종 정산 결과 잔여 체력 우세 (${hp2} vs ${hp1})로 판정승을 거두었습니다.`;
         } else {
-          // Tied HP -> Compare total damage dealt
           if (dmg1 > dmg2) {
             winnerId = 1;
             verdictReason = `체력 동률 (${hp1} vs ${hp2})! 누적 총 피해량 우세 (${dmg1} vs ${dmg2})로 승리 판정.`;
@@ -1460,7 +1423,6 @@
         verdictTitle = `⚖️ 결투 무승부 (DRAW)`;
       }
 
-      // Show Result Modal
       document.getElementById('resultWinnerText').innerText = verdictTitle;
       document.getElementById('resultReasonText').innerText = verdictReason;
 
