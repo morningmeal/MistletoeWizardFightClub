@@ -1099,6 +1099,8 @@
         }
       };
 
+      closeResultModal();
+
       document.getElementById('btnStartDuel').disabled = false;
       document.getElementById('btnNextPhase').disabled = true;
       document.getElementById('btnAutoPlay').disabled = true;
@@ -1147,19 +1149,13 @@
       if (!duelState.isActive || duelState.isFinished) return;
 
       if (duelState.isAutoPlaying) {
-        clearInterval(duelState.autoPlayTimer);
-        duelState.autoPlayTimer = null;
-        duelState.isAutoPlaying = false;
-        document.getElementById('btnAutoPlay').innerText = '⚡ 자동 진행';
+        stopAutoPlay();
       } else {
         duelState.isAutoPlaying = true;
         document.getElementById('btnAutoPlay').innerText = '⏸ 일시 정지';
         duelState.autoPlayTimer = setInterval(() => {
           if (duelState.isFinished || !duelState.isActive) {
-            clearInterval(duelState.autoPlayTimer);
-            duelState.autoPlayTimer = null;
-            duelState.isAutoPlaying = false;
-            document.getElementById('btnAutoPlay').innerText = '⚡ 자동 진행';
+            stopAutoPlay();
           } else {
             processNextPhase();
           }
@@ -1167,8 +1163,24 @@
       }
     }
 
+    function stopAutoPlay() {
+      if (duelState.autoPlayTimer) {
+        clearInterval(duelState.autoPlayTimer);
+        duelState.autoPlayTimer = null;
+      }
+      duelState.isAutoPlaying = false;
+      const autoBtn = document.getElementById('btnAutoPlay');
+      if (autoBtn) autoBtn.innerText = '⚡ 자동 진행';
+    }
+
     function processNextPhase() {
       if (!duelState.isActive || duelState.isFinished) return;
+
+      // 선제적 KO 검사
+      if (checkEndCondition(false)) {
+        finishDuel();
+        return;
+      }
 
       if (duelState.currentSubPhase === 0) {
         executeInitiativeRoll();
@@ -1197,8 +1209,8 @@
     }
 
     function executeInitiativeRoll() {
-      const p1Spd = characters[1].derived.spd;
-      const p2Spd = characters[2].derived.spd;
+      const p1Spd = Math.max(1, characters[1].derived.spd);
+      const p2Spd = Math.max(1, characters[2].derived.spd);
 
       const roll1 = Math.floor(Math.random() * p1Spd) + 1;
       const roll2 = Math.floor(Math.random() * p2Spd) + 1;
@@ -1249,7 +1261,7 @@
       const atkStats = atkChar.derived;
       const defStats = defChar.derived;
 
-      const atkRand = Math.floor(Math.random() * atkStats.atk) + 1;
+      const atkRand = Math.floor(Math.random() * Math.max(1, atkStats.atk)) + 1;
       let rawAtkDamage = Math.floor(atkRand + (atkStats.atk / 3));
       
       const isAtkCrit = (Math.random() * 100) < atkStats.crit;
@@ -1257,8 +1269,8 @@
         rawAtkDamage += 5;
       }
 
-      const defPassion = defChar.finalStats.passion;
-      const defCaution = defChar.finalStats.caution;
+      const defPassion = Math.max(0, defChar.finalStats.passion);
+      const defCaution = Math.max(0, defChar.finalStats.caution);
       const reactSum = defPassion + defCaution;
       const counterChance = reactSum === 0 ? 50 : (defPassion / reactSum) * 100;
       
@@ -1275,7 +1287,7 @@
         duelState.combatants[defenderId].reactionDefendCount++;
         setStanceDisplay(defenderId, '🛡️ 방어 태세', 'bg-sky-950/80 text-sky-300 border-sky-700');
 
-        const defRand = Math.floor(Math.random() * defStats.def) + 1;
+        const defRand = Math.floor(Math.random() * Math.max(1, defStats.def)) + 1;
         let defAmount = Math.floor(defRand + (defStats.def / 2));
         const isDefCrit = (Math.random() * 100) < defStats.crit;
         if (isDefCrit) {
@@ -1375,10 +1387,13 @@
     }
 
     function checkEndCondition(isEndOfTurn) {
+      if (!duelState.combatants) return false;
       const hp1 = duelState.combatants[1].hp;
       const hp2 = duelState.combatants[2].hp;
 
+      // 실신(KO) 상태 발생 시 즉시 종료
       if (hp1 <= 0 || hp2 <= 0) return true;
+      // 7턴 최종 정산 완료 시 종료
       if (isEndOfTurn && duelState.currentTurn >= 7) return true;
 
       return false;
@@ -1387,10 +1402,7 @@
     function finishDuel() {
       duelState.isFinished = true;
       duelState.isActive = false;
-      if (duelState.autoPlayTimer) {
-        clearInterval(duelState.autoPlayTimer);
-        duelState.autoPlayTimer = null;
-      }
+      stopAutoPlay();
 
       document.getElementById('btnNextPhase').disabled = true;
       document.getElementById('btnAutoPlay').disabled = true;
@@ -1453,10 +1465,8 @@
 
       // Populate Clean Official Report Form
       const now = new Date();
-      const duelCode = `MWFC-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.floor(1000 + Math.random() * 9000)}`;
       const dateStr = `${now.getFullYear()}. ${String(now.getMonth()+1).padStart(2,'0')}. ${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-      document.getElementById('repDuelCode').innerText = duelCode;
       document.getElementById('repDuelDate').innerText = dateStr;
 
       document.getElementById('resultWinnerText').innerText = verdictTitle;
@@ -1474,6 +1484,7 @@
       document.getElementById('resP1Dmg').innerText = `${dmg1} DMG`;
       document.getElementById('resP2Dmg').innerText = `${dmg2} DMG`;
 
+      // 결과 모달창 표시
       document.getElementById('resultModal').classList.remove('hidden');
 
       appendLog(`
@@ -1485,7 +1496,8 @@
     }
 
     function closeResultModal() {
-      document.getElementById('resultModal').classList.add('hidden');
+      const modal = document.getElementById('resultModal');
+      if (modal) modal.classList.add('hidden');
     }
 
     function downloadResultImage() {
@@ -1497,7 +1509,6 @@
       btn.innerHTML = '<span>⏳</span> 보고서 생성 중...';
       btn.disabled = true;
 
-      // Clean, robust render options without unsupported gradient breaks
       html2canvas(captureEl, {
         backgroundColor: '#111625',
         scale: 2,
